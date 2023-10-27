@@ -195,16 +195,75 @@ void Display::print(uint16_t x, uint16_t y, const char *pString) {
 }
 
 void Display::print(uint16_t x, uint16_t y, const char *pString, sFont *font, uint16_t bg_color, uint16_t text_color) {
+    uint16_t Xpoint = x;
+    uint16_t Ypoint = y;
 
+    //TODO FIX check :)
+//    if (Xstart > Paint.Width || Ystart > Paint.Height) {
+//        //Debug("Paint_DrawString_EN Input exceeds the normal display range\r\n");
+//        return;
+//    }
+
+    while (* pString != '\0') {
+        //if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
+        if ((Xpoint + font->Width ) > _width ) {
+            Xpoint = x;
+            Ypoint += font->Height;
+        }
+
+        // If the Y direction is full, reposition to(Xstart, Ystart)
+        if ((Ypoint + font->Height ) > _height ) {
+            Xpoint = x;
+            Ypoint = y;
+        }
+        drawChar(Xpoint, Ypoint, * pString, font, bg_color, text_color);
+
+        //The next character of the address
+        pString ++;
+
+        //The next word of the abscissa increases the font of the broadband
+        Xpoint += font->Width;
+    }
 }
 
 void Display::drawChar(uint16_t x, uint16_t y, const char c, sFont *Font, uint16_t bg_color, uint16_t text_color) {
 
+    uint16_t Page, Column;
 
+    if (x > _width || y > _height) {
+        //Debug("Paint_DrawChar Input exceeds the normal display range\r\n");
+        return;
+    }
+
+    uint32_t Char_Offset = (c - ' ') * Font->Height * (Font->Width / 8 + (Font->Width % 8 ? 1 : 0));
+    const unsigned char *ptr = &Font->table[Char_Offset];
+
+    for (Page = 0; Page < Font->Height; Page++) {
+        for (Column = 0; Column < Font->Width; Column++) {
+            if (pgm_read_byte(ptr) & (0x80 >> (Column % 8))) {
+                drawPixel(x + Column, y + Page, text_color);
+            } else {
+                drawPixel(x + Column, y + Page, bg_color);
+            }
+
+            //One pixel is 8 bits
+            if (Column % 8 == 7) {
+                ptr++;
+            }
+        }
+
+        // Move to the next byte if Font's width isn't a multiple of 8
+        if (Font->Width % 8 != 0) {
+            ptr++;
+        }
+    }
 }
 
 void Display::drawPixel(int16_t x, int16_t y, uint16_t color) {
-
+    if ((x >= 0) && (x < _width) && (y >= 0) && (y < _height)) {
+        setAddrWindow(x, y, 1, 1);
+        spiWrite16(color);
+    }
 }
 
 
