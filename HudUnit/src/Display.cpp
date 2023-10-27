@@ -109,12 +109,66 @@ void Display::fillScreen(uint16_t color) {
 }
 
 void Display::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    if (w && h) {   // Nonzero width and height?
+        if (w < 0) {  // If negative width...
+            x += w + 1; //   Move X to left edge
+            w = -w;     //   Use positive width
+        }
+        if (x < _width) { // Not off right
+            if (h < 0) {    // If negative height...
+                y += h + 1;   //   Move Y to top edge
+                h = -h;       //   Use positive height
+            }
+            if (y < _height) { // Not off bottom
+                int16_t x2 = x + w - 1;
+                if (x2 >= 0) { // Not off left
+                    int16_t y2 = y + h - 1;
+                    if (y2 >= 0) { // Not off top
+                        // Rectangle partly or fully overlaps screen
+                        if (x < 0) {
+                            x = 0;
+                            w = x2 + 1;
+                        } // Clip left
+                        if (y < 0) {
+                            y = 0;
+                            h = y2 + 1;
+                        } // Clip top
+                        if (x2 >= _width) {
+                            w = _width - x;
+                        } // Clip right
+                        if (y2 >= _height) {
+                            h = _height - y;
+                        } // Clip bottom
+                        startWrite();
 
+                        setAddrWindow(x, y, w, h);
+                        writeColor(color, (uint32_t)w * h);
+
+                        endWrite();
+                    }
+                }
+            }
+        }
+    }
 }
 
 
 void Display::writeColor(uint16_t color, uint32_t len) {
 
+    if (!len)
+        return; // Avoid 0-byte transfers
+
+    while (len--) {
+        for (uint16_t bit = 0, x = color; bit < 16; bit++) {
+            if (x & 0x8000)
+                SPI_MOSI_HIGH();
+            else
+                SPI_MOSI_LOW();
+            SPI_SCK_HIGH();
+            x <<= 1;
+            SPI_SCK_LOW();
+        }
+    }
 }
 
 void Display::drawImage() {
