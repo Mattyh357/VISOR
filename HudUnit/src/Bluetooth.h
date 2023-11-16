@@ -19,16 +19,20 @@ public:
     Bluetooth() {};
     Bluetooth(const char* deviceName, const char* serviceID, const char* charID);
 
-    void begin();
+    void begin(Bluetooth* instance);
     bool isConnected();
     void setAdvertising(bool status);
 
-    void sendData(const std::string& data);
+    void sendData(uint8_t data);
     bool isThereNewData();
     std::string getData();
 
 //    void getOOB();
 //    void clearLTK()
+
+
+    //TESTING
+    void onReceivedData(const uint8_t* data, size_t length);
 
 private:
     //TODO comments
@@ -54,6 +58,9 @@ private:
     bool _newDataAvailable;
 
 
+    //TESTING
+    static uint8_t calculateChecksum(const uint8_t* data, size_t length);
+    void sendAcknowledgment(bool isSuccessful);
 
 
 
