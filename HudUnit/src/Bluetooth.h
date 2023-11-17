@@ -14,6 +14,26 @@
 
 //#include "/home/matt/.arduino15/packages/esp32/hardware/esp32/2.0.11/libraries/BLE/src/BLEDevice.h"
 
+
+#define ACK_ERROR 0x00
+#define ACK_OK 0x01
+
+#define SPEED_INSTRUCTION 0x05
+#define NAVIGATION_IMG_INSTRUCTION 0x06
+//
+//
+#define REQUEST_BOOT_DATA 0x10
+#define RESTART_BOOTING 0x11
+#define IMG_FILE_INSTRUCTION 0x12
+#define CONFIG_INSTRUCTION 0x13
+#define ALL_BOOT_DATA_SENT 0x15
+#define BOOT_DATA_PROCESSED 0x16
+
+
+
+
+#define CHECKSUM_SIZE 1
+
 class Bluetooth {
 public:
     Bluetooth() {};
@@ -25,7 +45,7 @@ public:
 
     void sendData(uint8_t data);
     bool isThereNewData();
-    std::string getData();
+
 
 //    void getOOB();
 //    void clearLTK()
@@ -33,11 +53,13 @@ public:
 
     //TESTING
     void onReceivedData(const uint8_t* data, size_t length);
+    std::vector<uint8_t> _fileStorage;
+    uint8_t last_instruction;
+    uint16_t last_data;
+    uint16_t getData();
+
 
 private:
-    //TODO comments
-    void wipeData();
-
 
     /** @brief The device name that is displayed during discovery. */
     const char* _deviceName;
@@ -58,10 +80,12 @@ private:
     bool _newDataAvailable;
 
 
-    //TESTING
+    //TESTING some methods
     static uint8_t calculateChecksum(const uint8_t* data, size_t length);
     void sendAcknowledgment(bool isSuccessful);
-
+    void handleFileChunk(const uint8_t* chunkData, size_t length);
+    uint16_t _remainingChunks;
+    void onCompleteReceivedData(uint8_t instruction, uint16_t data);
 
 
 };
