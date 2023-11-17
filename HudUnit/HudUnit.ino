@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include "src/Visor.h"
 
-Visor visor;
+Visor visor = Visor();
 
 void setup() {
-    visor.setup();
+  visor.setup();
 }
 
 void loop() {
-    visor.update();
+  visor.update();
 }
