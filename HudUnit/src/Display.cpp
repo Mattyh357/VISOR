@@ -171,9 +171,64 @@ void Display::writeColor(uint16_t color, uint32_t len) {
     }
 }
 
-void Display::drawImage() {
-    //good question :)
+//TODO TEST START
+
+void Display::drawImage(sImage *Image) {
+
+    for (uint16_t y = 0; y < Image->Height; y++) {
+        for (uint16_t x = 0; x < Image->Width; x++) {
+            uint16_t position = y * Image->Width + x;
+
+            // Make sure to read the correct byte from the image table
+            uint8_t pixelValue = pgm_read_byte(&Image->table[position / 8]);
+
+            // Check if the specific bit for the pixel is set or not
+            uint8_t mask = 1 << (7 - (position % 8));
+            bool isPixelSet = pixelValue & mask;
+
+            if (isPixelSet) {
+                drawPixel(x, y, BLACK); // If the bit is set, draw a black pixel
+            } else {
+                drawPixel(x, y, WHITE); // If the bit is not set, draw a white pixel
+            }
+        }
+    }
+
 }
+
+
+
+
+void Display::drawImageTest(MyImage image) {
+
+    // TODO needs to draw in the middle of the screen
+    // TODO get rid of the vector that's there for no reason :)
+
+
+
+    for (uint16_t y = 0; y < image.Height; y++) {
+        for (uint16_t x = 0; x < image.Width; x++) {
+            uint16_t position = y * image.Width + x;
+
+            const std::vector<uint8_t>& imageData = image.getData(); // meh
+            uint8_t pixelValue = imageData[position / 8];
+
+            // Check if the specific bit for the pixel is set or not
+            uint8_t mask = 1 << (7 - (position % 8));
+            bool isPixelSet = pixelValue & mask;
+
+            if (isPixelSet) {
+                drawPixel(x, y, BLACK); // If the bit is set, draw a black pixel
+            } else {
+                drawPixel(x, y, WHITE); // If the bit is not set, draw a white pixel
+            }
+        }
+    }
+
+}
+
+//TODO TEST END
+
 
 void Display::setTextColor(uint16_t color) {
     //TODO not null
@@ -266,5 +321,22 @@ void Display::drawPixel(int16_t x, int16_t y, uint16_t color) {
     }
 }
 
+
+void Display::testForQR(int16_t x, int16_t y, uint16_t color) {
+
+    int scaleFactor = 3;
+
+    for (int16_t i = 0; i < scaleFactor; i++) {
+        for (int16_t j = 0; j < scaleFactor; j++) {
+            int16_t scaledX = x * scaleFactor + i;
+            int16_t scaledY = y * scaleFactor + j;
+
+            if ((scaledX >= 0) && (scaledX < _width) && (scaledY >= 0) && (scaledY < _height)) {
+                setAddrWindow(scaledX, scaledY, 1, 1);
+                spiWrite16(color);
+            }
+        }
+    }
+}
 
 
