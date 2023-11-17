@@ -21,6 +21,10 @@
 #include "MySPI.h"
 #include "SSD1331_CMD.h"
 #include "Fonts.h"
+#include "Images.h"
+
+//TODO test
+#include "MyImage.h"
 
 
 #define  BLACK          0x0000
@@ -35,6 +39,8 @@
 
 class Display : public MySPI{
 public:
+
+    void testForQR(int16_t x, int16_t y, uint16_t color);
 
     /********************************************************
      *                       Constructors                   *
@@ -121,8 +127,11 @@ public:
      */
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 
-    //TODO comments and actually figure out how this is gonna work :D
-    void drawImage();
+    //TODO probably gonna go away anyway
+    void drawImage(sImage *Image);
+
+    // TODO this is probably gonna stay
+    void drawImageTest(MyImage image);
 
     // Text
 
