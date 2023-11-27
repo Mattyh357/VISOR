@@ -1,3 +1,9 @@
 HudUnit/cmake-build-debug/*
 HudUnit/.idea/*
 HudUnit/CMakeLists.txt
+
+Extra/.idea/*
+Extra/bmp2bin2hex/myenv/*
+Extra/bmp2bin2hex/.idea/*
+
+Extra/Tester_bt_send/.idea/*
