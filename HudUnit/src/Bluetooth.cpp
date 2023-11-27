@@ -7,21 +7,16 @@
 
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
-
 private:
     Bluetooth* bluetoothInstance;
-
 public:
     explicit MyCharacteristicCallbacks(Bluetooth* instance) : bluetoothInstance(instance) {}
-
     void onWrite(BLECharacteristic *pCharacteristic) override {
         std::string value = pCharacteristic->getValue();
-
         if (!value.empty()) {
             bluetoothInstance->onReceivedData((uint8_t*)value.data(), value.length());
         }
     }
-
 };
 
 
@@ -173,6 +168,7 @@ void Bluetooth::onReceivedData(const uint8_t* data, size_t length) {
                 break;
             case IMG_FILE_INSTRUCTION: // File Transfer
                 _remainingChunks = payload;
+                _totalChunks = payload;
                 _fileStorage.clear(); // Clear any existing data
                 _fileStorage.reserve(16000); // Reserve space for the file
 
