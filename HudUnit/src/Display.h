@@ -21,13 +21,13 @@
 #include "MySPI.h"
 #include "SSD1331_CMD.h"
 #include "Fonts.h"
-#include "Images.h"
 
 //TODO test
 #include "MyImage.h"
+#include "Images.h"
 
 
-#define  BLACK          0x0000
+#define BLACK           0x0000
 #define WHITE           0xFFFF
 #define BLUE            0x001F
 #define RED             0xF800
@@ -40,6 +40,7 @@
 class Display : public MySPI{
 public:
 
+    //TODO test
     void testForQR(int16_t x, int16_t y, uint16_t color);
 
     /********************************************************
@@ -281,7 +282,7 @@ private:
     /**
      * @brief Current font for printing text.
      */
-    sFont* _textFont{}; // TODO default font
+    sFont* _textFont{}; // TODO default font - probably gonna handle fonts differently anyway
 
     /**
      * @brief Current color used for text printing.
