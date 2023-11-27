@@ -17,19 +17,14 @@
 
 #define ACK_ERROR 0x00
 #define ACK_OK 0x01
-
 #define SPEED_INSTRUCTION 0x05
 #define NAVIGATION_IMG_INSTRUCTION 0x06
-//
-//
 #define REQUEST_BOOT_DATA 0x10
 #define RESTART_BOOTING 0x11
 #define IMG_FILE_INSTRUCTION 0x12
 #define CONFIG_INSTRUCTION 0x13
 #define ALL_BOOT_DATA_SENT 0x15
 #define BOOT_DATA_PROCESSED 0x16
-
-
 
 
 #define CHECKSUM_SIZE 1
@@ -58,6 +53,10 @@ public:
     uint16_t last_data;
     uint16_t getData();
 
+    uint16_t _remainingChunks;
+    uint16_t _totalChunks;
+
+
 
 private:
 
@@ -84,7 +83,6 @@ private:
     static uint8_t calculateChecksum(const uint8_t* data, size_t length);
     void sendAcknowledgment(bool isSuccessful);
     void handleFileChunk(const uint8_t* chunkData, size_t length);
-    uint16_t _remainingChunks;
     void onCompleteReceivedData(uint8_t instruction, uint16_t data);
 
 
