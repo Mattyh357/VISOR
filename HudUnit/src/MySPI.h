@@ -8,7 +8,7 @@
  *
  *  Very loosely based on Adafruit's GPX library, and <INCLUDE SOURCE FOR THE OTHER LIBRARY>.
  *  TODO LINKs:
- *
+ *  TODO Change to hardware SPI as that would be much faster
  *
  *  @author Matt (Martin) Hnizdo
  *  @date 27/10/2023

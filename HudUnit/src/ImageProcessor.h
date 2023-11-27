@@ -10,8 +10,9 @@
 #include "Arduino.h"
 #include "MyImage.h"
 
-
+// TODO change everything! :)
 // TODO needs error handling ;)
+// the problem is...that if the image would fail to load, I cannot simply skip it - as the index of the image is important
 // TODO needs a lot of stuff  actually :D
 // it's all a bit shite if I can be honest.....
 
@@ -21,6 +22,7 @@ public:
 
     ImageProcessor() {};
 
+    //TODO fix! or just burn with fire ;)
     ImageProcessor(const std::vector<uint8_t>& fileData) {
 //        if (fileData.size() < 12) {
 //            throw std::runtime_error("File data too small");
