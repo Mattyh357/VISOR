@@ -97,7 +97,9 @@ void Visor::update() {
 
     // lost connection handling
     if(myMode != disconnected && _bt.isConnected() == false) {
+        // TODO should not print every loop.. just once
         // when I lose connection
+        _display.fillScreen(BLACK);
         _display.print(10, 10, "lost", &Font24, BLACK, WHITE);
         myMode = lostSignal;
         _updateTimer = 0;
@@ -111,12 +113,19 @@ void Visor::update() {
             Serial.println("Connected - sending REQUEST_BOOT_DATA");
             delay(1000);
             myMode = booting;
+            _display.fillScreen(BLACK);
             _display.print(10, 10, "boot", &Font24, BLACK, WHITE);
             _bt.sendData(REQUEST_BOOT_DATA);
         }
         return;
     }
     else if (myMode == booting) {
+
+        // TODO this should only run when actually booting :)
+        // TODO percentage
+        std::string status = std::to_string((_bt._totalChunks - _bt._remainingChunks)) + "/" + std::to_string(_bt._totalChunks);
+        _display.print(10, 30, status.c_str(), &Font24, BLACK, WHITE);
+
         if(_bt.last_instruction == ALL_BOOT_DATA_SENT) {
             // TODO process boot data
             Serial.println("PROCESSING BOOT DATA");
@@ -130,19 +139,24 @@ void Visor::update() {
 
             _bootingCompleted = true;
             myMode = working;
+            _display.fillScreen(BLACK);
             _display.print(10, 10, "work", &Font24, BLACK, WHITE);
             _bt.sendData(BOOT_DATA_PROCESSED);
         }
+
         return;
     }
     else if (myMode == lostSignal) {
         if(_bt.isConnected() == true) {
             if(_bootingCompleted) {
                 myMode = working;
+                _display.fillScreen(BLACK);
                 _display.print(10, 10, "w1", &Font24, BLACK, WHITE);
             }
             else{
                 myMode = booting;
+
+                _display.fillScreen(BLACK);
                 _display.print(10, 10, "b1", &Font24, BLACK, WHITE);
                 _bt.sendData(REQUEST_BOOT_DATA);
             }
@@ -163,6 +177,8 @@ void Visor::update() {
             std::string number = std::to_string(_bt.getData());
             std::string text = "S:" + number;
             Serial.println(text.c_str());
+
+            _display.fillScreen(BLACK);
             _display.print(10, 10, text.c_str(), &Font24, BLACK, WHITE);
             return;
         }
@@ -178,7 +194,7 @@ void Visor::update() {
             std::string text = "I:" + std::to_string(number);
             Serial.println(text.c_str());
 
-
+            _display.fillScreen(BLACK);
             _display.drawImageTest(_imgProcessor.getImage(number));
 
 

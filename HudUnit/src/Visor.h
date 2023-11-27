@@ -45,7 +45,7 @@ protected:
 
 private:
 
-    unsigned long _updateTimer = 0;
+    unsigned long _updateTimer = 0; // Meh
 
     Display _display;
 
