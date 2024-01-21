@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.matt.visor.fragments.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_rides"
+        android:name="com.matt.visor.fragments.rides.RidesFragment"
+        android:label="@string/title_rides"
+        tools:layout="@layout/fragment_rides" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.matt.visor.fragments.history.HistoryFragment"
+        android:label="@string/title_history"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_config"
+        android:name="com.matt.visor.fragments.config.ConfigFragment"
+        android:label="@string/title_config"
+        tools:layout="@layout/fragment_config" />
+
+    <fragment
+        android:id="@+id/navigation_sensor_detail"
+        android:name="com.matt.visor.fragments.home.SensorDetail"
+        android:label="@string/title_sensor_detail"
+        tools:layout="@layout/fragment_config" />
+
+
+    <!--  History  -->
+
+    <fragment
+        android:id="@+id/navigation_history_detail"
+        android:name="com.matt.visor.fragments.history.HistoryDetailFragment"
+        android:label="@string/title_history_details"
+        tools:layout="@layout/fragment_history_detail" />
+</navigation>

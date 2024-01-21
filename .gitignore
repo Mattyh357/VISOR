@@ -7,3 +7,5 @@ Extra/bmp2bin2hex/myenv/*
 Extra/bmp2bin2hex/.idea/*
 
 Extra/Tester_bt_send/.idea/*
+AndroidApp/.idea/*
+AndroidApp/visor/.idea/*

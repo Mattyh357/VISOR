@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">visor</string>
+    <string name="title_home">Home</string>
+    <string name="title_rides">Rides</string>
+    <string name="title_history">History</string>
+    <string name="title_config">Config</string>
+    <string name="title_sensor_detail">Sensor Detail</string>
+    <string name="title_history_details">History Detail\t</string>
+</resources>
