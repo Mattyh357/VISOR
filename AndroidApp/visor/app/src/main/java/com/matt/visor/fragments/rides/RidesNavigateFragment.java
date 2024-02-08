@@ -1,8 +1,10 @@
 package com.matt.visor.fragments.rides;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,14 +27,17 @@ import com.matt.visor.GoogleMapsAPI.DirectionsCallback;
 import com.matt.visor.GoogleMapsAPI.GoogleDirectionsAPI;
 import com.matt.visor.GoogleMapsAPI.Waypoint;
 import com.matt.visor.R;
-import com.matt.visor.app.MySensor;
+import com.matt.visor.RideActivity;
+import com.matt.visor.app.MySensorGPS;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentRidesNavigateBinding;
 
 import java.util.List;
-import java.util.Map;
 
 public class RidesNavigateFragment extends Fragment {
+
+
+    private static final int DEFAULT_ZOOM = 15;
 
     private FragmentRidesNavigateBinding _binding;
 
@@ -40,8 +45,7 @@ public class RidesNavigateFragment extends Fragment {
     private Marker _mapMarkerOrigin;
     private Marker _mapMarkerDestination;
     private GoogleMap _map;
-
-    private MySensor _sensor;
+    private MySensorGPS _gps;
     private Polyline currentPolyline;
 
 
@@ -51,7 +55,7 @@ public class RidesNavigateFragment extends Fragment {
         View root = _binding.getRoot();
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-        _sensor = app.deviceManager.getGPS();
+        _gps = app.deviceManager.getGPS();
 
 
         //MAP
@@ -61,6 +65,7 @@ public class RidesNavigateFragment extends Fragment {
             mapFragment.getMapAsync(googleMap -> {
 
                 // Initial coordinates
+                // TODO init coordinates
                 LatLng location = new LatLng(-34, 151);
 
                 // Markers
@@ -73,23 +78,25 @@ public class RidesNavigateFragment extends Fragment {
                 _mapMarkerDestination = googleMap.addMarker(new MarkerOptions().position(location).title("Destination"));
 
                 // Camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, DEFAULT_ZOOM));
 
                 // Google map
                 _map = googleMap;
                 _map.setOnMapClickListener(this::onMapClick);
 
-
                 updateStartPosition();
-
             });
         }
-        //MAP
 
         // Buttons
-
         _binding.ridesNavigateBtnUpdateStart.setOnClickListener(v -> updateStartPosition());
         _binding.ridesNavigateBtnGetRoute.setOnClickListener(v -> getRoute());
+        _binding.ridesNavigateBtnStartRide.setOnClickListener(v -> {
+        // TODO bundle the route...
+
+        Intent intent = new Intent(this.getActivity(), RideActivity.class);
+        startActivity(intent);
+        });
 
         return root;
     }
@@ -102,10 +109,8 @@ public class RidesNavigateFragment extends Fragment {
             String apiKey = bundle.getString("com.google.android.geo.API_KEY");
 
             return apiKey;
-            // Now you can use the apiKey variable for whatever you need
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            // Handle the error gracefully here
         }
 
         return "";
@@ -205,25 +210,16 @@ public class RidesNavigateFragment extends Fragment {
 
 
 
-
-
-
     private void updateStartPosition() {
-        System.out.println("Updating start position");
+        Location location = _gps.getLocation();
 
-        Map<String, Object> data = _sensor.getValues();
-
-        if (_mapMarkerOrigin != null && data != null && data.size() > 0) {
-
-            // Get the new latitude and longitude from your sensor
-            double newLatitude = (double) data.get("latitude");
-            double newLongitude = (double) data.get("longitude");
-
-            LatLng newLocation = new LatLng(newLatitude, newLongitude);
+        if (_mapMarkerOrigin != null && location != null) {
+            LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             // Update the marker's position
             _mapMarkerOrigin.setPosition(newLocation);
-            _map.animateCamera(CameraUpdateFactory.newLatLngZoom(_mapMarkerOrigin.getPosition(), 14));
+            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, DEFAULT_ZOOM));
+            // TODO Only change the zoom when it's actually relevant
         }
     }
 
