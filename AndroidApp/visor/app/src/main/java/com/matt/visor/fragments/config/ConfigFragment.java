@@ -19,8 +19,8 @@ public class ConfigFragment extends Fragment {
         _binding = FragmentConfigBinding.inflate(inflater, container, false);
         View root = _binding.getRoot();
 
-        final TextView textView = _binding.textConfig;
-        textView.setText("CONFIG");
+//        final TextView textView = _binding.textConfig;
+//        textView.setText("CONFIG");
         return root;
     }
 
