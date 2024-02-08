@@ -1,0 +1,38 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp"
+    android:layout_margin="2dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp"
+        android:gravity="center"
+        >
+
+        <TextView
+            android:id="@+id/kvp_txt_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="35sp"
+            android:text="value"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/kvp_txt_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:layout_marginBottom="5dp"
+            android:text="key"
+            />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
