@@ -10,10 +10,8 @@
     android:layout_weight="1"
     android:layout_marginHorizontal="10dp"
     android:layout_marginVertical="5dp"
-
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-
     >
 
     <LinearLayout
@@ -22,7 +20,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:paddingHorizontal="20dp"
-
         >
 
         <ImageView
@@ -31,7 +28,8 @@
             android:layout_height="50dp"
             android:scaleType="centerCrop"
             android:layout_gravity="center"
-            android:src="@drawable/splash_screen"
+            android:contentDescription="@string/item_sensor_icon"
+            android:src="@drawable/launcher_icon"
             />
 
         <LinearLayout
@@ -46,16 +44,16 @@
                 android:textSize="15sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="NAME"/>
+                android:text="@string/placeholder"
+                />
 
             <TextView
                 android:id="@+id/sensor_item_status"
                 android:textSize="15sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="STATUS"/>
+                android:text="@string/placeholder"
+                />
 
         </LinearLayout>
     </LinearLayout>
