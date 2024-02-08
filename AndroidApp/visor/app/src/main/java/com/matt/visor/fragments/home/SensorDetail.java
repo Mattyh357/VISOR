@@ -8,13 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.matt.visor.MySensor;
 import com.matt.visor.databinding.FragmentSensorDetailBinding;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SensorDetail extends Fragment {
 
