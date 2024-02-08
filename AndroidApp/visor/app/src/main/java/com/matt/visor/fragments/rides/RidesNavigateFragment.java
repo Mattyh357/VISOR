@@ -1,5 +1,7 @@
 package com.matt.visor.fragments.rides;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,9 +94,28 @@ public class RidesNavigateFragment extends Fragment {
         return root;
     }
 
+    private String getApiKey() {
+
+        try {
+            ApplicationInfo app = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = app.metaData;
+            String apiKey = bundle.getString("com.google.android.geo.API_KEY");
+
+            return apiKey;
+            // Now you can use the apiKey variable for whatever you need
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            // Handle the error gracefully here
+        }
+
+        return "";
+    }
+
     private void getRoute() {
 
         clearRoute();
+
+        String key = getApiKey();
 
         LatLng origin = _mapMarkerOrigin.getPosition();
         LatLng destination = _mapMarkerDestination.getPosition();
@@ -102,11 +123,6 @@ public class RidesNavigateFragment extends Fragment {
         //TODO hardcoded stuff :)
         origin = new LatLng(56.4706, -3.0119);
         destination = new LatLng(56.4635, -2.9737);
-
-        //TODO hardcoded API KEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        String key = "AIzaSyBvCCwlnot8C_2tHYit4jUtngb6q8aNTCQ";
-
-
 
 
         GoogleDirectionsAPI googleDirectionsAPI = new GoogleDirectionsAPI(key);
