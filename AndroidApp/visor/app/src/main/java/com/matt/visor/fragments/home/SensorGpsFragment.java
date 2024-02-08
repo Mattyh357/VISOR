@@ -14,6 +14,7 @@
 
 package com.matt.visor.fragments.home;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,13 +34,12 @@ import com.matt.visor.R;
 import com.matt.visor.TableKvpAdapter;
 import com.matt.visor.TableKvpItem;
 import com.matt.visor.Utils;
-import com.matt.visor.app.MySensor;
+import com.matt.visor.app.MySensorGPS;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentSensorGpsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SensorGpsFragment extends Fragment {
 
@@ -49,11 +49,25 @@ public class SensorGpsFragment extends Fragment {
 
     private Marker _mapMarker;
     private GoogleMap _map;
-    private MySensor _sensor;
+    private MySensorGPS _gps;
     private LatLng _lastLocation = new LatLng(0,0);
     private TableKvpAdapter _rva;
 
 
+    /**
+     * Creates and returns the view hierarchy associated with the fragment.
+     * Initializes map, details table, and GPS sensor listener.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
@@ -69,7 +83,6 @@ public class SensorGpsFragment extends Fragment {
                 LatLng location = new LatLng(-34, 151);  // Initial coordinates
                 _mapMarker = googleMap.addMarker(new MarkerOptions().position(location).title("position"));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, DEFAULT_ZOOM));
-                // TODO zoom magic
                 _map = googleMap;
             });
         }
@@ -91,25 +104,22 @@ public class SensorGpsFragment extends Fragment {
 
 
         // GPS sensor
-        _sensor = app.deviceManager.getGPS();
-        _sensor.setValueChangedListener(this::onMapChange);
+        _gps = app.deviceManager.getGPS();
+        _gps.setValueChangedListener(this::onMapChange);
 
         return root;
     }
 
     /**
-     * TODO comment
-     * TODO null check
+     * Handles map changes by updating the marker's position to the new location and passes the
+     * location to a method that prints is.
      */
+
     public void onMapChange() {
-        Map<String, Object> data = _sensor.getValues();
+        Location location = _gps.getLocation();
 
-        if (_mapMarker != null && data != null && data.size() > 0) {
-            // Get the new latitude and longitude from your sensor
-            double newLatitude = (double) data.get("latitude");
-            double newLongitude = (double) data.get("longitude");
-
-            LatLng newLocation = new LatLng(newLatitude, newLongitude);
+        if (_mapMarker != null && location != null) {
+            LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
             // Only change on actual update
             if(!_lastLocation.equals(newLocation)){
@@ -118,42 +128,45 @@ public class SensorGpsFragment extends Fragment {
                 // Update the marker's position
                 _mapMarker.setPosition(newLocation);
                 _map.moveCamera(CameraUpdateFactory.newLatLng(_mapMarker.getPosition()));
-                displayDetails(data);
+                displayDetails(location);
             }
-
         }
-
     }
 
 
     /**
-     * Formats and displays data using KVP Adapter.
+     * Displays detailed information about a location.
      *
-     * @param data Data to be displayed - uses map with keys: latitude, longitude, altitude, speed, timeInSeconds
+     * @param location The location object to display details for.
      */
-    private void displayDetails(Map<String, Object> data) {
-        if(data == null || data.size() == 0)
+    private void displayDetails(Location location) {
+        if(location == null)
             return;
 
         // Format
-        // TODO unit
-        data.put("altitude", data.get("altitude") + " UNIT");
-        data.put("speed", data.get("speed") + " UNIT");
-        data.put("timeInSeconds", Utils.epochToDateTime((Long)data.get("timeInSeconds")));
-
-        _rva.update(data);
+        // TODO units
+        _rva.update("latitude",  location.getLatitude());
+        _rva.update("longitude",  location.getLongitude());
+        _rva.update("altitude",  location.getAltitude());
+        _rva.update("speed", Utils.formatSpeed(location.getSpeed()) + " Km/h");
+        _rva.update("timeInSeconds", Utils.formatUnixToDateAndTime(location.getTime()));
     }
 
 
-
+    /**
+     * Detaches the GPS value changed listener when the fragment is paused.
+     */
     @Override
     public void onPause() {
         super.onPause();
-        if (_sensor != null) {
-            _sensor.setValueChangedListener(null);
+        if (_gps != null) {
+            _gps.setValueChangedListener(null);
         }
     }
 
+    /**
+     * Cleans up resources, including map and binding, when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
