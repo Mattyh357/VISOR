@@ -1,8 +1,10 @@
 package com.matt.visor;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Utils {
 
@@ -33,6 +35,26 @@ public class Utils {
         System.out.println("FORMAT TEST: " + sec + " -> " + out);
 
         return out;
+    }
+
+
+    public static String secondsToTime(int totalSeconds) {
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        // Format the time parts to ensure they are displayed as two digits
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+    }
+
+
+    public static String epochToDateTime(Long epochTime) {
+//        long epochTime = Long.parseLong(epochTimeStr);
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+        return format.format(new Date(epochTime));
+
     }
 
 }
