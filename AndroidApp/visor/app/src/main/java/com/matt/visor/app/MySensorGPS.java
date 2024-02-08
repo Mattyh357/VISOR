@@ -13,40 +13,28 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MySensorGPS extends MySensor {
 
-    private Activity _activity;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
-    private Location lastLocation;
-
-    public MySensorGPS(@NonNull Activity activity) {
-        super("map", "0", TYPE_NONE);
-        isMap = true;
-    }
+    private FusedLocationProviderClient _fusedLocationProviderClient;
+    private LocationCallback _locationCallback;
+    private Location _lastLocation;
 
     public MySensorGPS() {
-        super("map", "0", TYPE_NONE);
-        isMap = true;
-
+        super("GPS", "0", TYPE_NONE);
     }
 
     public void activateSensor(@NonNull Activity activity) {
-        this._activity = activity;
-        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+//        this._activity = activity;
+        this._fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
 
-        locationCallback = new LocationCallback() {
+        _locationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
+            public void onLocationResult(@NonNull LocationResult locationResult) {
                 if(getStatus() != Status.Connected)
                     setStatus(Status.Connected);
 
                 super.onLocationResult(locationResult);
-                lastLocation = locationResult.getLastLocation();
-                System.out.println("Location update: " + lastLocation);
+                _lastLocation = locationResult.getLastLocation();
 
                 if(_sensorValueListener != null)
                     _sensorValueListener.onSensorValueChange();
@@ -54,21 +42,6 @@ public class MySensorGPS extends MySensor {
         };
 
         startLocationUpdates();
-    }
-
-    @Override
-    public Map<String, Object> getValues() {
-        Map<String, Object> values = new HashMap<>();
-
-        if(lastLocation != null) {
-            values.put("latitude", lastLocation.getLatitude());
-            values.put("longitude", lastLocation.getLongitude());
-            values.put("altitude", lastLocation.hasAltitude() ? lastLocation.getAltitude() : -1);
-            values.put("speed", lastLocation.hasSpeed() ? lastLocation.getSpeed() : -1);
-            values.put("timeInSeconds", lastLocation.getTime());
-        }
-
-        return values;
     }
 
     @SuppressLint("MissingPermission")
@@ -79,15 +52,15 @@ public class MySensorGPS extends MySensor {
         locationRequest.setFastestInterval(3000); // Adjust as necessary
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        _fusedLocationProviderClient.requestLocationUpdates(locationRequest, _locationCallback, Looper.getMainLooper());
     }
 
     public void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        _fusedLocationProviderClient.removeLocationUpdates(_locationCallback);
     }
 
     public Location getLocation() {
-        return lastLocation;
+        return _lastLocation;
     }
 
 
