@@ -58,7 +58,6 @@
             android:value="${API_KEY}"
             />
 
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
