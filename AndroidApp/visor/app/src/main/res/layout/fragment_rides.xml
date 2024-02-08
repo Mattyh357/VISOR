@@ -18,9 +18,10 @@
         android:focusable="true"
         app:cardCornerRadius="8dp"
         app:cardElevation="12dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginHorizontal="25dp"
+        android:background="@color/background"
         >
 
         <LinearLayout
@@ -30,6 +31,14 @@
             android:gravity="center"
             >
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/free_ride"
+                android:contentDescription="@string/ride_free_ride" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,7 +47,7 @@
                 android:layout_marginEnd="8dp"
                 android:textAlignment="center"
                 android:textSize="20sp"
-                android:text="Free ride"
+                android:text="@string/ride_free_ride"
                 />
 
         </LinearLayout>
@@ -54,8 +63,8 @@
         android:focusable="true"
         app:cardCornerRadius="8dp"
         app:cardElevation="12dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginHorizontal="25dp"
         >
 
         <LinearLayout
@@ -65,6 +74,14 @@
             android:gravity="center"
             >
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/free_ride"
+                android:contentDescription="@string/ride_navigate_to" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +90,7 @@
                 android:layout_marginEnd="8dp"
                 android:textAlignment="center"
                 android:textSize="20sp"
-                android:text="Navigate to"
+                android:text="@string/ride_navigate_to"
                 />
 
         </LinearLayout>

@@ -53,6 +53,9 @@ public class SplashScreen extends AppCompatActivity {
         listOfPermissions.add(android.Manifest.permission.BLUETOOTH_CONNECT);
         listOfPermissions.add(Manifest.permission.BLUETOOTH_SCAN);
 
+        //Service
+        listOfPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
+
         //Permission helper
         _permissionHelper = new PermissionHelper(this, listOfPermissions, new PermissionHelper.Callback() {
             @Override
@@ -125,6 +128,7 @@ public class SplashScreen extends AppCompatActivity {
      */
     private void startApp() {
         Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+//        Intent intent = new Intent(SplashScreen.this, RideActivity.class);
         startActivity(intent);
     }
 

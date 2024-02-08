@@ -12,10 +12,43 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_hud_detail"
+        android:name="com.matt.visor.fragments.home.HudDetailFragment"
+        android:label="@string/title_hud_detail"
+        tools:layout="@layout/fragment_hud_detail" />
+
+    <fragment
+        android:id="@+id/navigation_sensor_gps"
+        android:name="com.matt.visor.fragments.home.SensorGpsFragment"
+        android:label="@string/title_sensor_GPS"
+        tools:layout="@layout/fragment_sensor_gps" />
+
+    <fragment
+        android:id="@+id/navigation_sensor_detail"
+        android:name="com.matt.visor.fragments.home.SensorDetail"
+        android:label="@string/title_sensor_detail"
+        tools:layout="@layout/fragment_config" />
+
+
+
+
+
+
+
+    <!--  RIDES  -->
+
+
+    <fragment
         android:id="@+id/navigation_rides"
         android:name="com.matt.visor.fragments.rides.RidesFragment"
         android:label="@string/title_rides"
         tools:layout="@layout/fragment_rides" />
+
+    <fragment
+        android:id="@+id/navigation_rides_navigate"
+        android:name="com.matt.visor.fragments.rides.RidesNavigateFragment"
+        android:label="@string/title_rides_navigate"
+        tools:layout="@layout/fragment_rides_navigate" />
 
     <fragment
         android:id="@+id/navigation_history"
@@ -29,11 +62,7 @@
         android:label="@string/title_config"
         tools:layout="@layout/fragment_config" />
 
-    <fragment
-        android:id="@+id/navigation_sensor_detail"
-        android:name="com.matt.visor.fragments.home.SensorDetail"
-        android:label="@string/title_sensor_detail"
-        tools:layout="@layout/fragment_config" />
+
 
 
     <!--  History  -->

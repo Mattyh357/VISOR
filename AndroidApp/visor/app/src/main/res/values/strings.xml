@@ -1,9 +1,48 @@
 <resources>
     <string name="app_name">visor</string>
+    <string name="app_name_dots">V.I.S.O.R</string>
     <string name="title_home">Home</string>
     <string name="title_rides">Rides</string>
     <string name="title_history">History</string>
     <string name="title_config">Config</string>
     <string name="title_sensor_detail">Sensor Detail</string>
     <string name="title_history_details">History Detail\t</string>
+    <string name="app_version">0.00000000001</string>
+    <string name="title_hud_detail">HUD Detail</string>
+    <string name="title_sensor_GPS">Sensor GPS</string>
+    <string name="title_rides_navigate">Rides - Navigate to</string>
+
+
+    <!-- Dialog -->
+    <string name="dialog_confirm">Confirm</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+
+    <!-- Permissions -->
+    <string name="permission_problem">The app does not have permissions that it needs…</string>
+    <string name="permission_request">This section of the app requires some permissions. The permissions are needed for proper functioning of the activity. Do you want to grant the permissions?</string>
+    <string name="permission_denied">Permission denied - this can be changes in the phones settings. The app will NOT LOAD without all permission, go to settings and fix it :)</string>
+    <string name="permission_denied_toast">App failed due to the lack of permissions - this should not have happened :)</string>
+    <string name="unsupported">You phone probably does not support this feature.</string>
+
+
+    <string name="details">Details</string>
+    <string name="home_hud_unit">HUD unit</string>
+    <string name="home_gps">GPS</string>
+    <string name="home_sensors">Sensors</string>
+    <string name="placeholder">placeholder</string>
+    <string name="ride_free_ride">Free ride</string>
+    <string name="ride_navigate_to">Navigate to</string>
+    <string name="history_map_image">map image</string>
+    <string name="item_sensor_icon">Icon for sensor item</string>
+    <string name="ride_map">Ride map</string>
+
+
+
+    <string name="connecting">Connecting...</string>
+
+
 </resources>

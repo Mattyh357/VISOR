@@ -6,17 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     tools:context=".fragments.home.HomeFragment"
+    android:gravity="center"
     >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SOME STUFF probably about the HUD :) "
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/home_hud_unit"
         />
 
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/home_hud_button"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         android:clickable="true"
@@ -24,7 +29,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="5dp"
         app:cardCornerRadius="12dp"
-        android:elevation="4dp"
+        app:cardElevation="4dp"
         >
 
         <LinearLayout
@@ -42,8 +47,8 @@
                 android:layout_height="50dp"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center"
-                android:src="@drawable/splash_screen"
-                />
+                android:src="@drawable/icon_hud"
+                android:contentDescription="@string/home_hud_unit" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -53,28 +58,83 @@
                 android:paddingHorizontal="20dp"
                 >
                 <TextView
-                    android:id="@+id/sensor_item_name"
+                    android:id="@+id/home_hud_name"
                     android:textSize="15sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="HUD unit"/>
+                    android:text="@string/home_hud_unit"/>
 
                 <TextView
-                    android:id="@+id/sensor_item_status"
+                    android:id="@+id/home_hud_status"
                     android:textSize="15sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="STATUS"/>
+                    android:text="@string/placeholder"/>
+                
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/home_gps"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/home_btn_gps"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:clickable="true"
+        android:layout_gravity="fill"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="5dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        >
+
+        <LinearLayout
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingHorizontal="20dp"
+
+            >
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_gps"
+                android:contentDescription="@string/home_gps" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="20dp"
+                >
+                <TextView
+                    android:textSize="15sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_sensor_GPS"
+                    />
 
                 <TextView
-                    android:id="@+id/sensor_item_status1"
+                    android:id="@+id/home_gps_status"
                     android:textSize="15sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="Battery %"/>
+                    android:text="@string/placeholder"
+                    />
 
             </LinearLayout>
         </LinearLayout>
@@ -82,40 +142,19 @@
 
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/home_sensors"
+        />
 
-
-
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Sensor overview"
-    android:textSize="25sp"
-    />
-
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/my_devices_recycler_view"
-    android:layout_width="match_parent"
-    android:layout_height="400dp"
-    />
-
-<TextView
-    android:id="@+id/text_home"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:textAlignment="center"
-    android:textSize="20sp"
-    android:text="will be replaced"
-    />
-
-<Button
-    android:id="@+id/home_btn_start_ride"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Start a ride"
-    android:layout_gravity="center"
-    />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_devices_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
 
 </LinearLayout>

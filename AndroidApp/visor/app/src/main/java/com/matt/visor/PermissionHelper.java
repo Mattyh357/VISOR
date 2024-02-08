@@ -1,3 +1,13 @@
+/**
+ * This class is part of the V.I.S.O.R app.
+ * Permission helper - Responsible checking and requesting all permissions in a list.
+ *
+ * Requires "onRequestPermissionsResult" to be passed from the activity class!
+ *
+ * @version 1.0
+ * @since 0/01/2024
+ */
+
 package com.matt.visor;
 
 import android.app.Activity;

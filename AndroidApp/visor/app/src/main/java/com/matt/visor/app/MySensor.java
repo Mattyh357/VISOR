@@ -1,5 +1,7 @@
-package com.matt.visor;
+package com.matt.visor.app;
 
+
+import com.matt.visor.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,17 +13,17 @@ public class MySensor {
     private String _address;
     private int _type;
 
-//    protected SensorStatusListener _sensorStatusListener;
-//    protected SensorValueListener _sensorValueListener;
+    protected SensorStatusListener _sensorStatusListener;
+    protected SensorValueListener _sensorValueListener;
 
 
     public boolean isMap = false;
 
     public static final int TYPE_NONE = -0;
-    public static final int TYPE_GPS = 0;
-    public static final int TYPE_HR = 1;
-    public static final int TYPE_CAD = 2;
-    public static final int TYPE_PWR = 3;
+    public static final int TYPE_GPS = 5;
+    public static final int TYPE_HR = 6;
+    public static final int TYPE_CAD = 7;
+    public static final int TYPE_PWR = 8;
 
     public enum Status {
         NotFound,
@@ -36,15 +38,18 @@ public class MySensor {
         _address = address;
         _status = Status.Connecting;
         _type = type;
+
+
+        isMap = type == TYPE_GPS;
     }
 
-//    public void setStatusChangeListener(SensorStatusListener listener) {
-//        this._sensorStatusListener = listener;
-//    }
-//
-//    public void setValueChangedListener(SensorValueListener listener) {
-//        this._sensorValueListener = listener;
-//    }
+    public void setStatusChangeListener(SensorStatusListener listener) {
+        _sensorStatusListener = listener;
+    }
+
+    public void setValueChangedListener(SensorValueListener listener) {
+        this._sensorValueListener = listener;
+    }
 
     public String getName() {
         return _name;
@@ -81,11 +86,11 @@ public class MySensor {
     }
 
 
-//    public void setStatus(Status status) {
-//        _status = status;
-//        if(_sensorStatusListener != null)
-//            _sensorStatusListener.onChange();
-//    }
+    public void setStatus(Status status) {
+        _status = status;
+        if(_sensorStatusListener != null)
+            _sensorStatusListener.onChange();
+    }
 //
 //    public void setValue() {
 //        if(_sensorValueListener != null)
