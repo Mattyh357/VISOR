@@ -17,10 +17,7 @@ public class MySensor {
     protected SensorValueListener _sensorValueListener;
 
 
-    public boolean isMap = false;
-
-    public static final int TYPE_NONE = -0;
-    public static final int TYPE_GPS = 5;
+    public static final int TYPE_NONE = 0;
     public static final int TYPE_HR = 6;
     public static final int TYPE_CAD = 7;
     public static final int TYPE_PWR = 8;
@@ -38,9 +35,6 @@ public class MySensor {
         _address = address;
         _status = Status.Connecting;
         _type = type;
-
-
-        isMap = type == TYPE_GPS;
     }
 
     public void setStatusChangeListener(SensorStatusListener listener) {
@@ -83,6 +77,7 @@ public class MySensor {
         }
 
         return "I dunno...";
+
     }
 
 
@@ -126,8 +121,6 @@ public class MySensor {
                 return R.drawable.icon_cad;
             case TYPE_PWR:
                 return R.drawable.icon_pwr;
-            case TYPE_GPS:
-                return R.drawable.icon_gps;
             default:
                 return R.drawable.splash_screen;
         }
