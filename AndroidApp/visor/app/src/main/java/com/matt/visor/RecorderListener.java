@@ -1,9 +1,9 @@
 package com.matt.visor;
 
-import java.util.Map;
+import com.matt.visor.app.RecordDataPoint;
 
 public interface RecorderListener {
 
-    void onNewData(Map<String, Object> data);
+    void onNewData(RecordDataPoint recordDataPoint, int elapsedTime);
 
 }
