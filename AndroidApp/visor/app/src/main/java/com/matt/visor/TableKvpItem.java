@@ -2,7 +2,7 @@ package com.matt.visor;
 
 public class TableKvpItem {
 
-    private String key;
+    private String _key;
 
     private String key_readable;
     private String value;
@@ -10,18 +10,18 @@ public class TableKvpItem {
 
     // TODO delete
     public TableKvpItem(String key, String value) {
-        this.key = key;
+        this._key = key;
         this.value = value;
     }
 
     public TableKvpItem(String key, String key_readable, String value) {
-        this.key = key;
+        this._key = key;
         this.key_readable = key_readable;
         this.value = value;
     }
 
     public String getKey() {
-        return key;
+        return _key;
     }
 
     public String getKeyReadable() {
@@ -36,4 +36,15 @@ public class TableKvpItem {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public boolean setValueIfKey(String key, Object value) {
+        if(key.equals(_key)){
+            setValue(value.toString());
+            return true;
+        }
+        return false;
+    }
+
+
+
 }
