@@ -33,20 +33,24 @@ public class TableKvpAdapter extends RecyclerView.Adapter<TableKvpAdapter.ViewHo
 //    }
 
     public void update(Map<String, Object> newData) {
-
         for (int i = 0; i < _data.size(); i++) {
-
-            if(newData.containsKey(_data.get(i).getKey())) {
-
-                String newText = newData.get(_data.get(i).getKey()).toString();
-
-                _data.get(i).setValue(newText);
-                notifyItemChanged(i);
+            String key = _data.get(i).getKey();
+            if(newData.containsKey(key)) {
+                Object value = newData.get(key);
+                if(value != null) {
+                    _data.get(i).setValue(value.toString());
+                    notifyItemChanged(i);
+                }
             }
         }
-
     }
 
+    public void update(String key, Object value) {
+        for (int i = 0; i < _data.size(); i++) {
+            if(_data.get(i).setValueIfKey(key, value))
+                notifyItemChanged(i);
+        }
+    }
 
 
     public TableKvpAdapter(Context context, List<TableKvpItem> data, int itemLayout) {
