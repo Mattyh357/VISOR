@@ -1,10 +1,13 @@
 package com.matt.visor;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 
 public class Utils {
 
@@ -56,5 +59,72 @@ public class Utils {
         return format.format(new Date(epochTime));
 
     }
+
+
+
+    public static Map<String, Object> formatMappedData(Map<String, Object> data) {
+
+
+        for (Map.Entry<String, Object> e : data.entrySet()) {
+            String key = e.getKey();
+
+            switch(key) {
+                case "time":
+                    data.put(key, secondsToTime((int) e.getValue()));
+                    break;
+                case "speed":
+                    if(e.getValue() == null){
+                        data.put(key, "null");
+                        break;
+                    }
+                    else {
+                        float speed = (float) e.getValue();
+
+                        if (speed < 1)
+                            speed = 0;
+
+                        BigDecimal bd = new BigDecimal(Float.toString(speed));
+                        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+                        data.put(key, bd.floatValue());
+                        break;
+                    }
+
+            }
+        }
+
+
+        return data;
+    }
+
+
+
+
+
+
+
+
+    public static String formatElapsedTime(int totalSeconds) {
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
+
+        // Format the time parts to ensure they are displayed as two digits
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+    }
+
+    public static String formatSpeed(float speed) {
+        if (speed < 1)
+            speed = 0;
+
+        BigDecimal bd = new BigDecimal(Float.toString(speed));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+        return String.valueOf(bd.floatValue());
+    }
+
+
+
 
 }
