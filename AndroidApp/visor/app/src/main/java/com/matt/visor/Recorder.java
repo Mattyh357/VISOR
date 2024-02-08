@@ -1,7 +1,9 @@
 package com.matt.visor;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.location.Location;
+
+import com.matt.visor.app.RecordDataPoint;
+import com.matt.visor.app.VisorApplication;
 
 public class Recorder {
 
@@ -16,7 +18,12 @@ public class Recorder {
     // TEXT
     private int counter = 0;
 
-    public Recorder() {
+    VisorApplication _app;
+
+    public Recorder(VisorApplication app) {
+
+        _app = app;
+
         _thread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (_pauseLock) {
@@ -36,10 +43,11 @@ public class Recorder {
                     Thread.sleep(1000);
                     counter++;
 
-//                    updateNotification("Counter: " + counter + ", Duration: " + durationSeconds + " sec");
                     sendDataToListener("Counter: " + counter);
 
                     // DO SOMETHING
+
+
 
 
                 } catch (InterruptedException e) {
@@ -55,12 +63,23 @@ public class Recorder {
     }
 
     private void sendDataToListener(String test) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("time", counter);
+
+        Location location = _app.deviceManager.getGPS().getLocation();
+
+        if(location == null){
+            System.out.println("TODO big problem - location is null");
+            return;
+        }
+
+        RecordDataPoint recordDataPoint = new RecordDataPoint(location);
+
+
+        int elapsedTime = counter; // TODO wtf :)
 
         if(_recorderListener != null) {
-            _recorderListener.onNewData(data);
+            _recorderListener.onNewData(recordDataPoint, elapsedTime);
         }
+
     }
 
 
