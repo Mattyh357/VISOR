@@ -1,3 +1,5 @@
+// TODO comments and stuff... plus perhaps, dunno.. something :)
+
 package com.matt.visor.fragments.home;
 
 
@@ -16,7 +18,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.matt.visor.MySensor;
+import com.matt.visor.app.MySensor;
 import com.matt.visor.R;
 
 import java.util.List;
@@ -47,7 +49,7 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         holder.image.setImageResource(_data.get(position).getImage());
 
         //On Change
-//        _data.get(position).setStatusChangeListener(() -> notifyItemChanged(position));
+        _data.get(position).setStatusChangeListener(() -> notifyItemChanged(position));
 
         //On Click
         holder.cardView.setOnClickListener(view -> {
@@ -59,14 +61,10 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
             //Navigate
             NavController navController = Navigation.findNavController((Activity) _context, R.id.nav_host_fragment_activity_main);
 
-//            if(_data.get(position).isMap)
-//                navController.navigate(R.id.navigation_sensor_gps, bundle);
-//            else if (_data.get(position).hasAddress())
+            if (_data.get(position).hasAddress())
                 navController.navigate(R.id.navigation_sensor_detail, bundle);
 //            else
 //                navController.navigate(R.id.navigation_sensor_add, bundle);
-
-//            Toast.makeText(_context, "hfdjkashfdjk sa", Toast.LENGTH_SHORT).show();
 
         });
 
@@ -88,9 +86,9 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         CardView cardView ;
 
         /**
-         * Constructor to initialize the views for the MyViewHolder.
+         * Constructor to initialize the views for the SensorHolder.
          *
-         * @param itemView The item view to be held by this MyViewHolder.
+         * @param itemView The item view to be held by this SensorHolder.
          */
         public SensorHolder(View itemView) {
             super(itemView);
