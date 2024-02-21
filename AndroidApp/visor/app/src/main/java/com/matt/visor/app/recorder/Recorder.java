@@ -18,7 +18,6 @@ import android.location.Location;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.matt.visor.app.JourneyLoaderAndSaver;
 import com.matt.visor.app.VisorApplication;
 
 public class Recorder {
