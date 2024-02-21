@@ -9,12 +9,12 @@
     android:gravity="top"
     tools:context=".RideActivity">
 
-    <ImageView
+    <fragment
+        android:id="@+id/rides_gps_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:src="@drawable/free_ride"
-        android:background="@color/active"
-        android:contentDescription="@string/ride_map" />
+        />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -31,7 +31,7 @@
         android:id="@+id/ride_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/ride_bg_bottom_half"
+        android:background="@drawable/ride_bg_bottom_full"
         >
 
         <ImageButton
