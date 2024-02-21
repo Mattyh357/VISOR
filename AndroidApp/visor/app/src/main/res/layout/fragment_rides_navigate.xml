@@ -10,17 +10,12 @@
     tools:context=".fragments.rides.RidesNavigateFragment"
     >
 
-
-
-
     <fragment
         android:id="@+id/rides_navigate_gps_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         />
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +28,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="20sp"
-            android:text="Start position"
+            android:text="@string/start_position"
             />
 
 
@@ -44,8 +39,6 @@
             >
 
             <androidx.cardview.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="4dp"
@@ -67,7 +60,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="30sp"
-                        android:text="value"
                         android:textStyle="bold"
                         />
 
@@ -76,15 +68,13 @@
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:layout_marginBottom="5dp"
-                        android:text="Latitude"
+                        android:text="@string/latitude"
                         />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="4dp"
@@ -106,7 +96,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="30sp"
-                        android:text="value"
                         android:textStyle="bold"
                         />
 
@@ -115,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:layout_marginBottom="5dp"
-                        android:text="Longitude"
+                        android:text="@string/longitude"
                         />
 
                 </LinearLayout>
@@ -129,7 +118,10 @@
             android:id="@+id/rides_navigate_btn_update_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Update start position"
+            android:text="@string/update_start_position"
+
+            android:theme="@style/Button.Positive"
+
             />
 
 
@@ -142,7 +134,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="20sp"
-            android:text="Destination"
+            android:text="@string/destination"
             />
 
 
@@ -153,8 +145,6 @@
             >
 
             <androidx.cardview.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="4dp"
@@ -176,7 +166,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="30sp"
-                        android:text="value"
                         android:textStyle="bold"
                         />
 
@@ -185,15 +174,13 @@
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:layout_marginBottom="5dp"
-                        android:text="Latitude"
+                        android:text="@string/latitude"
                         />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardElevation="4dp"
@@ -215,7 +202,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="30sp"
-                        android:text="value"
                         android:textStyle="bold"
                         />
 
@@ -224,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:layout_marginBottom="5dp"
-                        android:text="Longitude"
+                        android:text="@string/longitude"
                         />
 
                 </LinearLayout>
@@ -232,26 +218,36 @@
 
         </LinearLayout>
 
-
-        <Button
-            android:id="@+id/rides_navigate_btn_get_route"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Get route"
-            android:layout_marginBottom="10dp"
-            />
-
-
-
     </LinearLayout>
 
 
-
-    <Button
-        android:id="@+id/rides_navigate_btn_start_ride"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start ride"
-        />
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/rides_navigate_btn_clear_route"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="5dp"
+            android:theme="@style/Button.Negative"
+            android:text="@string/nav_reset"
+            />
+
+        <Button
+            android:id="@+id/rides_navigate_btn_start_ride"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:theme="@style/Button.Positive"
+            android:text="@string/nav_confirm"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>
