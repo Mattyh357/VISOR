@@ -41,5 +41,24 @@
     </style>
 
 
+    <!--  Buttons  -->
+    <style name="Button.Positive" parent="ThemeOverlay.AppCompat">
+        <item name="colorPrimary">@color/active</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+
+    <style name="Button.Negative" parent="ThemeOverlay.AppCompat">
+        <item name="colorPrimary">@color/wifi_2</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+
+
+    <!--  Switch  -->
+
+    <style name="Switch" parent="Theme.MaterialComponents">
+        <item name="colorControlActivated">@color/active</item>
+        <item name="colorSurface">@color/gray_light</item>
+    </style>
+
 </resources>
 
