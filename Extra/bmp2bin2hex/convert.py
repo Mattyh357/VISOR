@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import sys
 from os.path import isfile, isdir, join
@@ -13,7 +11,7 @@ HEADER_BYTES_WIDTH = 4
 HEADER_BYTES_HEIGHT = 4
 VALID_SIZES = {(8, 8), (16, 16), (24, 24), (32, 32), (40, 40), (48, 48), (56, 56), (64, 64)}
 
-
+TEST = "test"
 
 class CustomBinaryImage:
     """
@@ -139,9 +137,9 @@ class ImageConverter:
         """
 
         # Size check
-        if image.size not in ImageConverter.VALID_SIZES:
+        if image.size not in VALID_SIZES:
             valid_sizes_str = ', '.join([f"{width}x{height}"
-                                         for width, height in sorted(list(ImageConverter.VALID_SIZES))])
+                                         for width, height in sorted(list(VALID_SIZES))])
             raise ValueError(f"Image dimensions must be one of the following: {valid_sizes_str}.")
 
         # Grayscale check
@@ -287,6 +285,7 @@ if __name__ == "__main__":
             converter.display_data()
             converter.save_data()
         elif isdir(path):
+            print("Folder contains images")
             # if path doesn't end with / ... add it?
             if not path.endswith("/"):
                 path += "/"
@@ -296,7 +295,10 @@ if __name__ == "__main__":
             files = [f for f in os.listdir(path) if isfile(join(path, f)) and f.endswith('.bmp')]
             files = sorted(files)
 
+            # TODO stop when there are no files
+
             for file in files:
+                print("Converting: " + file)
                 file_path = path + "/" + file
                 converter = ImageConverter(path, file)
                 # converter.display_data()
