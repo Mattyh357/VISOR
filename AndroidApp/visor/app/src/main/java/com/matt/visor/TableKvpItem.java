@@ -1,9 +1,7 @@
 /**
  * This class is part of the V.I.S.O.R app.
  * The TableKvpItem is a data construct to hold 1 item that will be displayed in a recycling view.
- * Although always a key-value pair, the value can have boolean value to be used in switch.
- *
- * TODO change to generic
+ * Using generics, it can take key as a string and value of anything it wants.
  *
  * @version 1.0
  * @since 21/02/2024
@@ -11,37 +9,23 @@
 
 package com.matt.visor;
 
-public class TableKvpItem {
+public class TableKvpItem<T> {
 
     private final String _key;
-    private final String key_readable;
-    private String value;
-
+    private final String _key_readable;
+    private T _value;
 
     /**
-     * Constructor for TableKvpItem with key, readable key, and string value.
+     * Constructor for TableKvpItem with key, readable key, and value of type T.
      *
      * @param key The key identifier.
      * @param key_readable The human-readable form of the key.
-     * @param value The value associated with the key.
+     * @param value The value associated with the key, of type T.
      */
-    public TableKvpItem(String key, String key_readable, String value) {
-        this._key = key;
-        this.key_readable = key_readable;
-        this.value = value;
-    }
-
-    /**
-     * Constructor for TableKvpItem with key, readable key, and boolean value.
-     *
-     * @param key The key identifier.
-     * @param key_readable The human-readable form of the key.
-     * @param value The boolean value, stored as null in this constructor.
-     */
-    public TableKvpItem(String key, String key_readable, boolean value) {
-        this._key = key;
-        this.key_readable = key_readable;
-        this.value = null;
+    public TableKvpItem(String key, String key_readable, T value) {
+        _key = key;
+        _key_readable = key_readable;
+        _value = value;
     }
 
     /**
@@ -59,37 +43,41 @@ public class TableKvpItem {
      * @return The readable key.
      */
     public String getKeyReadable() {
-        return key_readable;
+        return _key_readable;
     }
 
     /**
      * Retrieves the value associated with the key.
      *
-     * @return The value.
+     * @return The value of type T.
      */
-    public String getValue() {
-        return value;
+    public T getValue() {
+        return _value;
     }
 
     /**
-     * Sets the value associated with the key.
+     * Assigns a new value to the field if it matches the expected type.
      *
-     * @param value The new value to set.
+     * @param value The new value to assign.
      */
-    public void setValue(String value) {
-        this.value = value;
+
+    public void setValue(Object value) {
+
+        if (value != null && _value != null && _value.getClass().isAssignableFrom(value.getClass())) {
+            _value = (T) value;
+        }
     }
 
     /**
-     * Sets the value if the provided key matches the item's key.
+     * Sets the field value if the specified key matches the current key.
      *
      * @param key The key to check.
-     * @param value The value to set if the keys match.
+     * @param value The value to set if keys match.
      * @return True if the value was set, false otherwise.
      */
     public boolean setValueIfKey(String key, Object value) {
         if(key.equals(_key)){
-            setValue(value.toString());
+            setValue(value);
             return true;
         }
         return false;
