@@ -85,10 +85,10 @@ public class HistoryDetailFragment extends Fragment {
      */
     private void printData(Journey journey) {
 
-        String distance     = Formatter.formatDistance(journey.getTotalDistance());
+        String distance     = Formatter.formatDistance(journey.getTotalDistance(), true);
         String timeTotal    = Formatter.secondsAsElapsedTime((int)journey.getTimeTotal());
-        String timeStart    = Formatter.secondsToDateAndTime(journey.getTimeStarted());
-        String timeEnd      = Formatter.secondsToDateAndTime(journey.getTimeFinished());
+        String timeStart    = Formatter.epochToDateAndTime(journey.getTimeStarted());
+        String timeEnd      = Formatter.epochToDateAndTime(journey.getTimeFinished());
 
 
         System.out.println("Time started: " + journey.getTimeStarted() + " - " +  timeStart);
@@ -96,10 +96,10 @@ public class HistoryDetailFragment extends Fragment {
 
         // TODO more details
 
-        String speedMax     = Formatter.formatDistance(journey.getTotalDistance());
-        String speedAvg     = Formatter.formatDistance(journey.getTotalDistance());
-        String eleUp        = Formatter.formatDistance(journey.getTotalDistance());
-        String eleDown      = Formatter.formatDistance(journey.getTotalDistance());
+        String speedMax     = Formatter.formatDistance(journey.getTotalDistance(), true);
+        String speedAvg     = Formatter.formatDistance(journey.getTotalDistance(), true);
+        String eleUp        = Formatter.formatDistance(journey.getTotalDistance(), true);
+        String eleDown      = Formatter.formatDistance(journey.getTotalDistance(), true);
 
         List<TableKvpItem> data = new ArrayList<>();
         data.add(new TableKvpItem("", "Distance", distance));
