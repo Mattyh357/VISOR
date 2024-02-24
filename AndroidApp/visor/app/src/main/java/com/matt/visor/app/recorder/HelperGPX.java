@@ -50,7 +50,7 @@ public class HelperGPX {
         StringBuilder sb = new StringBuilder();
 
         sb.append(getDeclaration());
-        sb.append(getMetadata(Utils.UnixToZulu(time)));
+        sb.append(getMetadata(Formatter.epochToZulu(time)));
         sb.append(getHead(_name, _activity));
         sb.append(getBody(list));
         sb.append(getTail());
@@ -91,7 +91,7 @@ public class HelperGPX {
         sb.append("\n");
         sb.append("    <ele>").append(waypoint.getAltitude()).append("</ele>");
         sb.append("\n");
-        sb.append("    <time>").append(Utils.UnixToZulu(waypoint.getTime())).append("</time>");
+        sb.append("    <time>").append(Formatter.epochToZulu(waypoint.getTime())).append("</time>");
         sb.append("\n");
 
         // TODO fix this
