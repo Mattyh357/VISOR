@@ -101,16 +101,16 @@ public class HistoryDetailFragment extends Fragment {
         String eleUp        = Formatter.formatDistance(journey.getTotalDistance(), true);
         String eleDown      = Formatter.formatDistance(journey.getTotalDistance(), true);
 
-        List<TableKvpItem> data = new ArrayList<>();
-        data.add(new TableKvpItem("", "Distance", distance));
-        data.add(new TableKvpItem("", "timeTotal", timeTotal));
-        data.add(new TableKvpItem("", "timeStart", timeStart));
-        data.add(new TableKvpItem("", "timeEnd", timeEnd));
+        List<TableKvpItem<?>> data = new ArrayList<>();
+        data.add(new TableKvpItem<>("", "Distance", distance));
+        data.add(new TableKvpItem<>("", "timeTotal", timeTotal));
+        data.add(new TableKvpItem<>("", "timeStart", timeStart));
+        data.add(new TableKvpItem<>("", "timeEnd", timeEnd));
 
 
-        data.add(new TableKvpItem("", "etc", "123"));
-        data.add(new TableKvpItem("", "Speed", "123"));
-        data.add(new TableKvpItem("", "Last update", "123"));
+        data.add(new TableKvpItem<>("", "etc", "123"));
+        data.add(new TableKvpItem<>("", "Speed", "123"));
+        data.add(new TableKvpItem<>("", "Last update", "123"));
 
 
         // RecyclerView
