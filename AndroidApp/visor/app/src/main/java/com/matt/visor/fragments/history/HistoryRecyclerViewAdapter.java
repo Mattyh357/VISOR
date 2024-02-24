@@ -1,5 +1,13 @@
-package com.matt.visor.fragments.history;
+/**
+ * This class is part of the V.I.S.O.R app.
+ * HistoryRecyclerViewAdapter extends RecyclerView.Adapter to provide an adapter to display a
+ * list rides.
+ *
+ * @version 1.0
+ * @since 21/02/2024
+ */
 
+package com.matt.visor.fragments.history;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,21 +24,35 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.matt.visor.Journey;
 import com.matt.visor.R;
+import com.matt.visor.app.recorder.Formatter;
+import com.matt.visor.app.recorder.Journey;
 
 import java.util.List;
 
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.HistoryHolder>{
 
-    private Context _context;
-    private List<Journey> _data;
+    private final Context _context;
+    private final List<Journey> _data;
 
+    /**
+     * Constructor for initializing the adapter with context and data
+     *
+     * @param context The context in which the adapter is operating.
+     * @param data The data to populate the RecyclerView with.
+     */
     public HistoryRecyclerViewAdapter(Context context, List<Journey> data) {
         _context = context;
         _data = data;
     }
 
+    /**
+     * Provides the logic for creating ViewHolder objects for RecyclerView items.
+     *
+     * @param parent The ViewGroup into which the new View will be added.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder that holds the View for each item.
+     */
     @NonNull
     @Override
     public HistoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,27 +62,31 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         return new HistoryHolder(view);
     }
 
+    /**
+     * Binds the data to the ViewHolder in each RecyclerView item.
+     * Each item is assigned an onSetClickListener which redirects to detail fragment
+     * passing ID of the journey
+     *
+     * @param holder The ViewHolder which should be updated to represent the contents of the item.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull HistoryHolder holder, int position) {
-
-        holder.datetime.setText(_data.get(position).getTimeFinished());
-
-        holder.duration.setText(_data.get(position).getDuration());
-        holder.avgSpeed.setText(_data.get(position).getAvgSpeed());
-        holder.elevation.setText(_data.get(position).getElevationClimbed());
+        holder.datetime.setText(Formatter.epochToDateAndTime(_data.get(position).getTimeFinished()));
+        holder.distance.setText(Formatter.formatDistance(_data.get(position).getTotalDistance(), true));
+        holder.duration.setText(Formatter.secondsAsElapsedTime((int)_data.get(position).getTimeTotal()));
+        holder.avgSpeed.setText(Formatter.formatSpeed(_data.get(position).getAverageSpeed(), true));
+        holder.elevation.setText(Formatter.formatDistance(_data.get(position).getTotalElevationClimbed(), true));
 
         if(_data.get(position).getImage() != null)
             holder.image.setImageBitmap(_data.get(position).getImage());
         else
-            holder.image.setImageResource(_data.get(position).getDefaultImage());
+            holder.image.setImageResource(Journey.DEFAULT_IMAGE);
 
         //On Click
         holder.cardView.setOnClickListener(v -> {
-            System.out.println("test");
-
-
             Bundle bundle = new Bundle();
-            bundle.putInt("ItemHistoryPos", position);
+            bundle.putString("JourneyID", _data.get(position).getJourneyID());
 
             //Navigate
             NavController navController = Navigation.findNavController((Activity) _context, R.id.nav_host_fragment_activity_main);
@@ -68,20 +94,24 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         });
     }
 
-
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in this adapter.
+     */
     @Override
     public int getItemCount () {
             return _data.size();
         }
 
-
+    /**
+     * ViewHolder class for caching view components of each RecyclerView item.
+     */
     public static class HistoryHolder extends RecyclerView.ViewHolder {
 
         CardView cardView ;
-
         TextView datetime;
         ImageView image;
-
         TextView distance;
         TextView duration;
         TextView avgSpeed;
@@ -95,15 +125,15 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         public HistoryHolder(View itemView) {
             super(itemView);
 
-            cardView = (CardView) itemView.findViewById(R.id.item_history_id);
+            cardView = itemView.findViewById(R.id.item_history_id);
 
-            datetime = (TextView) itemView.findViewById(R.id.item_history_datetime);
-            image = (ImageView) itemView.findViewById(R.id.item_history_image);
+            datetime = itemView.findViewById(R.id.item_history_datetime);
+            image =  itemView.findViewById(R.id.item_history_image);
 
-            distance = (TextView) itemView.findViewById(R.id.item_history_distance);
-            duration = (TextView) itemView.findViewById(R.id.item_history_duration);
-            avgSpeed = (TextView) itemView.findViewById(R.id.item_history_avg_speed);
-            elevation = (TextView) itemView.findViewById(R.id.item_history_elevation);
+            distance = itemView.findViewById(R.id.item_history_distance);
+            duration = itemView.findViewById(R.id.item_history_duration);
+            avgSpeed = itemView.findViewById(R.id.item_history_avg_speed);
+            elevation = itemView.findViewById(R.id.item_history_elevation);
 
 
         }
