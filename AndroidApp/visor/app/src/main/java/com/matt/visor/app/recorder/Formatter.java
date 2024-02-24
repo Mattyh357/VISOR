@@ -11,6 +11,9 @@ package com.matt.visor.app.recorder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Formatter {
@@ -21,8 +24,8 @@ public class Formatter {
      * @param epochTime The epoch time in seconds.
      * @return The formatted date and time string.
      */
-    public static String secondsToDateAndTime(Long epochTime) {
-        return secondsToPattern(epochTime, "HH:mm:ss - dd/MM/yy");
+    public static String epochToDateAndTime(Long epochTime) {
+        return epochToPattern(epochTime, "HH:mm:ss - dd/MM/yy");
     }
 
     /**
@@ -32,7 +35,7 @@ public class Formatter {
      * @param pattern The pattern for formatting the date and time.
      * @return The formatted string.
      */
-    public static String secondsToPattern(Long epochTime, String pattern) {
+    public static String epochToPattern(Long epochTime, String pattern) {
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(new Date(epochTime * 1000));
     }
@@ -50,39 +53,70 @@ public class Formatter {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    public static String formatDistance(double distance) {
+    /**
+     * Formats a distance value with optional units, converting to meters if less than 1 km.
+     *
+     * @param distance The distance in kilometers.
+     * @param addUnits Flag to include units in the returned string.
+     * @return Formatted distance, optionally with units.
+     */
+    public static String formatDistance(double distance, boolean addUnits) {
         // Takes in KM
-        // TODO do math that convert to metres if b
 
+        String units = " Km";
+        int decPlaces = 2;
+
+        //  math that convert to metres if below 0
+        if(distance < 0){
+            distance *= 1000;
+            units = " m";
+            decPlaces = 0;
+        }
 
         BigDecimal bd = new BigDecimal(Double.toString(distance));
-        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        bd = bd.setScale(decPlaces, RoundingMode.HALF_UP);
 
-        return String.valueOf(bd.doubleValue()) + " Km"; // TODO hardcoded
+        String str = String.valueOf(bd.doubleValue());
+
+        if(addUnits)
+            str += units;
+
+        return str;
     }
 
-
-
-
-    public static String formatSpeed(double speed) {
+    /**
+     * Formats a speed value with optional units, rounding to zero if less than 1 km/h.
+     *
+     * @param speed The speed in kilometers per hour.
+     * @param addUnits Flag to include units in the returned string.
+     * @return Formatted speed, optionally with units.
+     */
+    public static String formatSpeed(double speed, boolean addUnits) {
         if (speed < 1)
             speed = 0;
 
         BigDecimal bd = new BigDecimal(Double.toString(speed));
         bd = bd.setScale(2, RoundingMode.HALF_UP);
 
-        return String.valueOf(bd.floatValue()) + " km/h";
+
+        String str = String.valueOf(bd.floatValue());
+
+        if(addUnits)
+            str += " km/h";
+
+        return str;
+    }
+
+    /**
+     * Converts epoch time to Zulu time format.
+     *
+     * @param sec The epoch time in seconds.
+     * @return Zulu time as a formatted string.
+     */
+    public static String epochToZulu(long sec) {
+        Instant instant = Instant.ofEpochSecond(sec);
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.of("Z"));
+        return formatter.format(instant);
     }
 
 
