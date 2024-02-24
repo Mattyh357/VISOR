@@ -1,3 +1,12 @@
+/**
+ * This class is part of the V.I.S.O.R app.
+ * The CustomBinProcessor is responsible for reading CustomBinaryFile and processing it into Bitmap
+ * images which can then be used in the app.
+ *
+ * @version 1.0
+ * @since 24/02/2024
+ */
+
 package com.matt.visor.app;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -13,14 +22,16 @@ import java.util.List;
 
 
 public class CustomBinProcessor {
-
     int scaleFactor = 6;
-
     private List<byte[]> _list = new ArrayList<>();
-    private int _numberOfImages = 0;
     private int _width = 0;
     private int _height = 0;
 
+    /**
+     * Constructs a processor for binary files to create bitmaps, verifying file existence.
+     *
+     * @param file The binary file to be processed.
+     */
     public CustomBinProcessor(File file) {
         if(!file.exists())
             System.out.println("PROBLEM - file doesn't exist");
@@ -28,7 +39,11 @@ public class CustomBinProcessor {
         processBinFile(file.getAbsolutePath());
     }
 
-
+    /**
+     * Converts a list of byte arrays to a list of Bitmaps.
+     *
+     * @return List of Bitmaps generated from byte arrays.
+     */
     public List<Bitmap> getListOfBitmaps() {
         List<Bitmap> list = new ArrayList<>();
 
@@ -36,11 +51,16 @@ public class CustomBinProcessor {
             list.add(getBitmap(b));
         }
 
-
         return list;
     }
 
-    public Bitmap getBitmap(byte[] imageData) {
+    /**
+     * Generates a Bitmap from byte array data, including scaling.
+     *
+     * @param imageData The byte array containing bitmap data.
+     * @return A scaled Bitmap created from the byte array.
+     */
+    private Bitmap getBitmap(byte[] imageData) {
 
         Bitmap originalBitmap = Bitmap.createBitmap(_width, _height, Bitmap.Config.ARGB_8888);
 
@@ -58,37 +78,22 @@ public class CustomBinProcessor {
         return Bitmap.createScaledBitmap(originalBitmap, _width * scaleFactor, _height * scaleFactor, false);
     }
 
-    // TODO old - remove
-    public Bitmap getBitmap(int imgNumber) {
-
-        Bitmap originalBitmap = Bitmap.createBitmap(_width, _height, Bitmap.Config.ARGB_8888);
-
-        byte[] imageData = _list.get(imgNumber); // TODO oob check
-
-        for (int y = 0; y < _height; y++) {
-            for (int x = 0; x < _width; x++) {
-                int index = (y * _width + x) / 8;
-                int bitPosition = x % 8;
-                byte currentByte = imageData[index];
-                int pixelValue = ((currentByte >> (7 - bitPosition)) & 1) == 1 ? Color.BLACK : Color.WHITE;
-                originalBitmap.setPixel(x, y, pixelValue);
-            }
-        }
-
-        // Scale the bitmap
-        return Bitmap.createScaledBitmap(originalBitmap, _width * scaleFactor, _height * scaleFactor, false);
-    }
-
-
+    /**
+     * Reads a binary file specified by its filepath to extract metadata and raw image data.
+     * This includes reading the number of images, width, height, and constructing a byte array for each image.
+     * Assumes the file format includes the image count, width, and height in little-endian order at the beginning.
+     * Handles I/O exceptions and prints error messages if reading fails or data is incomplete.
+     *
+     * @param filepath The path to the binary file containing image data.
+     */
     private void processBinFile(String filepath) {
-
         try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filepath))) {
 
             // Read and convert integers assuming little-endian format
             byte[] intBuffer = new byte[4];
 
             dataInputStream.readFully(intBuffer);
-            _numberOfImages = (int)(ByteBuffer.wrap(intBuffer).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xffffffffL);
+            int numberOfImages = (int)(ByteBuffer.wrap(intBuffer).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xffffffffL);
             dataInputStream.readFully(intBuffer);
             _width = (int)(ByteBuffer.wrap(intBuffer).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xffffffffL);
             dataInputStream.readFully(intBuffer);
@@ -96,7 +101,7 @@ public class CustomBinProcessor {
 
             long imageSize = _width * _height / 8;
 
-            for (int i = 0; i < _numberOfImages; ++i) {
+            for (int i = 0; i < numberOfImages; ++i) {
                 byte[] imageData = new byte[(int) imageSize];
 
                 int bytesRead = dataInputStream.read(imageData, 0, imageData.length);
@@ -117,10 +122,4 @@ public class CustomBinProcessor {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
 }
