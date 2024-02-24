@@ -125,6 +125,25 @@ public class Utils {
     }
 
 
+    public static String formatSpeed(double speed) {
+        if (speed < 1)
+            speed = 0;
+
+        BigDecimal bd = new BigDecimal(Double.toString(speed));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+        return String.valueOf(bd.doubleValue());
+    }
+
+    public static String formatDistance(double distance) {
+        BigDecimal bd = new BigDecimal(Double.toString(distance));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+
+        return String.valueOf(bd.doubleValue());
+    }
+
+
+
 
 
 }
