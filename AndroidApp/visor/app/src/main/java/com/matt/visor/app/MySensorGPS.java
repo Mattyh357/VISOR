@@ -25,8 +25,8 @@ import com.google.android.gms.location.LocationServices;
 
 public class MySensorGPS extends MySensor {
 
-    private static final int INTERVAL = 5000;
-    private static final int FASTEST_INTERVAL = 3000;
+    private static final int INTERVAL = 1000;
+    private static final int FASTEST_INTERVAL = 900;
 
     private FusedLocationProviderClient _fusedLocationProviderClient;
     private LocationCallback _locationCallback;
