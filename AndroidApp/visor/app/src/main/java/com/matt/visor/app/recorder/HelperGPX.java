@@ -9,8 +9,6 @@
 
 package com.matt.visor.app.recorder;
 
-import com.matt.visor.Utils;
-
 import java.util.List;
 
 public class HelperGPX {
