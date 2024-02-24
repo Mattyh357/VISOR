@@ -50,6 +50,10 @@
     <string name="start_position">Start position</string>
     <string name="nav_reset">RESET navigation</string>
     <string name="nav_confirm">SET / Start ride</string>
+    <string name="duration">Duration</string>
+    <string name="distance">Distance</string>
+    <string name="speed">Speed</string>
+    <string name="maveuver">Maneuver</string>
 
 
 </resources>
