@@ -127,12 +127,14 @@ public class Journey {
         System.out.println("Total time: " + _timeTotal);
 
         // Distance
-        _totalDistance += HaversineCalculator.haversineDistance(
+        double deltaDistance = HaversineCalculator.haversineDistance(
                 getLastWaypoint().getLatitude()
                 , getLastWaypoint().getLongitude()
                 , waypoint.getLatitude()
                 , waypoint.getLongitude()
         );
+
+        _totalDistance += deltaDistance / 1000; // Convert metres -> kilometres
 
         // Elevation
         double elevationDelta = waypoint.getAltitude() - getLastWaypoint().getAltitude();
