@@ -90,6 +90,9 @@ public class SplashScreen extends AppCompatActivity {
     private void loadStuff() {
         VisorApplication app = (VisorApplication) getApplication();
         app.loadDevices(this);
+
+        app.LoadImages();
+
 //        app.loadListOfJourneys(this);
     }
 
