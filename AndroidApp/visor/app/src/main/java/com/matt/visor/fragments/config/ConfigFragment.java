@@ -31,12 +31,12 @@ public class ConfigFragment extends Fragment implements TableKvpOnClickListener 
 
 
         // TEST RECYCLER
-        List<TableKvpItem> data = new ArrayList<>();
-        data.add(new TableKvpItem("", "Config 1", true));
-        data.add(new TableKvpItem("", "Config 2", true));
-        data.add(new TableKvpItem("", "Config 3", true));
-        data.add(new TableKvpItem("", "Config 4", true));
-        data.add(new TableKvpItem("", "Config 5", true));
+        List<TableKvpItem<?>> data = new ArrayList<>();
+        data.add(new TableKvpItem<>("", "Config 1", true));
+        data.add(new TableKvpItem<>("", "Config 2", true));
+        data.add(new TableKvpItem<>("", "Config 3", true));
+        data.add(new TableKvpItem<>("", "Config 4", true));
+        data.add(new TableKvpItem<>("", "Config 5", true));
 
 
         // RecyclerView
