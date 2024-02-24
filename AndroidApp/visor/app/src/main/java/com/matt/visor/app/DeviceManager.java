@@ -1,6 +1,8 @@
 package com.matt.visor.app;
 
 
+import com.matt.visor.app.hud.HudUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 
