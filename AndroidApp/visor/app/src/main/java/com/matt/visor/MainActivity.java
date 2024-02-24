@@ -19,7 +19,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.matt.visor.app.MySensorGPS;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.ActivityMainBinding;
 
@@ -45,10 +44,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        //TODO ACTIVATE STUFF
+        // Activate all sensors
         VisorApplication app = (VisorApplication) getApplication();
-        MySensorGPS gps = (MySensorGPS) app.deviceManager.getGPS();
-        gps.activateSensor(this);
+        app.deviceManager.activateAll(this);
     }
 
     @Override
