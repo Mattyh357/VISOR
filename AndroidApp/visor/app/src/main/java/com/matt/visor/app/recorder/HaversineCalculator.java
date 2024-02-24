@@ -20,10 +20,10 @@ public class HaversineCalculator {
      * @param lon1 Longitude of the first point.
      * @param lat2 Latitude of the second point.
      * @param lon2 Longitude of the second point.
-     * @return The distance in kilometers.
+     * @return The distance in meters.
      */
     public static double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371; // Radius of the earth in kilometers
+        double R = 6371e3; // Radius of the earth in METERS!!!
 
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
