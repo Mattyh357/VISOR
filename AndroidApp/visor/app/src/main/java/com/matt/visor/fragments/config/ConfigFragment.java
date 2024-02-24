@@ -40,7 +40,7 @@ public class ConfigFragment extends Fragment implements TableKvpOnClickListener 
 
 
         // RecyclerView
-        TableKvpAdapter _rva = new TableKvpAdapter(getContext(), data, R.layout.item_config, this);
+        TableKvpAdapter _rva = new TableKvpAdapter(getContext(), data, R.layout.kvp_toggle, this);
         _binding.configKvp.setLayoutManager(new LinearLayoutManager(getContext()));
         _binding.configKvp.setAdapter(_rva);
 
