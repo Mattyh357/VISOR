@@ -11,9 +11,6 @@
     android:layout_marginHorizontal="10dp"
     app:cardCornerRadius="12dp"
     >
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,10 +72,8 @@
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:src="@drawable/icon_history_24"
-            android:background="@color/active"
+            android:layout_marginVertical="10dp"
             android:contentDescription="@string/history_map_image" />
-<!--        TODO remove background color for the placeholder image-->
-<!--        TODO image size should be consistent-->
     </LinearLayout>
 
 
