@@ -37,5 +37,4 @@ typedef struct _tImage
 } sImage;
 
 extern sImage ImgDisconnected;
-extern sImage ImgLostSignal;
 extern sImage ImgStandBy;
