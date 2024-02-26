@@ -6,194 +6,216 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.matt.visor.app.MySensorGPS;
+import com.matt.visor.app.NavigatorThingy;
+import com.matt.visor.app.VisorApplication;
+import com.matt.visor.app.recorder.Formatter;
+import com.matt.visor.app.recorder.RecorderListener;
+
 import java.util.List;
-import java.util.Map;
 
-public class RideActivity extends AppCompatActivity {
+public class RideActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, RecorderListener {
 
-    private TableKvpAdapter _rva;
-
-
-    private int _counter = 0;
-
-
+//    private TableKvpAdapter _rva;
     private ImageButton _btnStartPauseSave;
     private ImageButton _btnDiscard;
     private ImageButton _btnSave;
     private ConstraintLayout _bottomBar;
 
+
+    private TextView _txtElapsed;
+    private TextView _txtDistance;
+    private TextView _txtSpeed;
+    private ImageView _imgManeuverIcon;
+    private TextView _txtManeuverDistance;
+
+
+    // Service
+    private RecorderService _recorderService;
+    private boolean isServiceBound = false;
     private boolean _running = false;
     private boolean _paused = false;
 
-    private RecorderService myService;
 
+    // Map
+    private static final int DEFAULT_ZOOM = 15;
+    private GoogleMap _map;
+    private Polyline _polylineActual;
+    private Polyline _polylineRoute;
+    private Marker _mapMarker;
+    private MySensorGPS _gps;
 
-    private boolean isServiceBound = false;
+    private NavigatorThingy _navigator;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // Map
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.rides_gps_map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
-
+        // Buttons
         _btnStartPauseSave = findViewById(R.id.ride_btn_startPauseSave);
         _btnDiscard = findViewById(R.id.ride_btn_discard);
         _btnSave = findViewById(R.id.ride_btn_save);
         _bottomBar = findViewById(R.id.ride_bottom_bar);
 
+        //Texts and images
+        _txtElapsed = findViewById(R.id.rides_txt_elapsed);
+        _txtDistance = findViewById(R.id.rides_txt_distance);
+        _txtSpeed = findViewById(R.id.rides_txt_speed);
+        _imgManeuverIcon = findViewById(R.id.rides_img_maneuverIcon);
+        _imgManeuverIcon = findViewById(R.id.rides_img_maneuverIcon);
+        _txtManeuverDistance = findViewById(R.id.rides_img_maneuverDistance);
 
         // onClickLListeners
-        _btnStartPauseSave.setOnClickListener(v -> {
-            if(!_running && !_paused)
-                onStartRide();
-            else if (_running && !_paused) {
-                onPauseRide();
-            } else if (_running && _paused) {
-                onResumeRide();
+        _btnDiscard.setOnClickListener(this);
+        _btnSave.setOnClickListener(this);
+        _btnStartPauseSave.setOnClickListener(this);
+
+        // Initialize data fields
+        resetView();
+    }
+
+    @Override
+    public void onClick(View v) {
+        // START PAUSE RESUME
+        if(v.getId() == R.id.ride_btn_startPauseSave) {
+            // START
+            if(!_running && !_paused){
+                _running = true;
+                _paused = false;
+
+                Intent serviceIntent = new Intent(this, RecorderService.class);
+                ContextCompat.startForegroundService(this, serviceIntent);
+                bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+                isServiceBound = true;
             }
-        });
+            // PAUSE
+            else if (_running && !_paused) {
+                _paused = true;
+                _recorderService.pause();
+            }
+            // RESUME
+            else if (_running && _paused) {
+                _paused = false;
+                _recorderService.resume();
+            }
+        }
+        // RESET
+        else if(v.getId() == R.id.ride_btn_discard) {
+            //TODO dialog
+            unbindAndStopService();
+            resetView();
+        }
+        else if(v.getId() == R.id.ride_btn_save) {
+            // TODO dialog
+            saveRide();
+            unbindAndStopService();
+            resetView();
+        }
 
-        _btnDiscard.setOnClickListener(v -> {
-            onResetRide();
-        });
 
-
-        _btnSave.setOnClickListener(v -> onSaveRide());
-
-
-
-
-        init();
-
+        setBottomBar();
     }
 
 
 
-
-    private void onStartRide() {
-        System.out.println("Start");
-
-        _running = true;
-        _paused = false;
-
-        // Buttons
-        _btnStartPauseSave.setImageResource(R.drawable.icon_ride_pause);
-        showExtraIcons(false);
-        //sps = pause
-
-
-        startService();
-    }
-
-    private void onPauseRide() {
-        System.out.println("Pause");
-
-        _running = true;
-        _paused = true;
-
-        // Buttons
-        _btnStartPauseSave.setImageResource(R.drawable.icon_ride_start);
-        showExtraIcons(true);
-
-
-        myService.pause();
-    }
-
-    private void onResumeRide() {
-        System.out.println("Continue");
-
-        _paused = false;
-
-        // Buttons
-        _btnStartPauseSave.setImageResource(R.drawable.icon_ride_pause);
-        showExtraIcons(false);
-
-        myService.resume();
-    }
-
-    private void onResetRide() {
-        System.out.println("reset");
-
-        stopService();
-        init();
-    }
-
-    private void onSaveRide() {
-
-        // TODO get all data...
-
-        // TODO save data
-
-
-        myService.getAllData();
-
-
-        // Reset
-        onResetRide();
-
-    }
-
-
-
-
-
-
-
-
-    private void startService() {
-        Intent serviceIntent = new Intent(this, RecorderService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
-        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
-        isServiceBound = true;
-
-    }
-
-    private void stopService () {
-
-
-        System.out.println("Stop bound ");
-
+    private void unbindAndStopService() {
         if (isServiceBound) {
             unbindService(connection);
             isServiceBound = false;
         }
 
-        System.out.println("Stopping service - intent");
         Intent serviceIntent = new Intent(this, RecorderService.class);
         stopService(serviceIntent);
     }
 
+    private void saveRide() {
 
-    private void showExtraIcons(boolean show) {
-        if(show) {
-            _bottomBar.setBackgroundResource(R.drawable.ride_bg_bottom_full);
-            _btnDiscard.setVisibility(View.VISIBLE);
-            _btnSave.setVisibility(View.VISIBLE);
-        }
-        else {
-            _bottomBar.setBackgroundResource(R.drawable.ride_bg_bottom_half);
-            _btnDiscard.setVisibility(View.INVISIBLE);
-            _btnSave.setVisibility(View.INVISIBLE);
-        }
+        // TODO get all data...
+
+
+        System.out.println("Saving route");
+
+        // TODO center map on the thing I want to save
+
+        // TODO display saving loading bar
+        _recorderService.saveData(_map, this);
+
+        // Hide loading bar with some on some listener
     }
+
+
+    private void setBottomBar() {
+        // Start pause icon
+        if (_running && !_paused) {
+            _btnStartPauseSave.setImageResource(R.drawable.icon_ride_pause);
+        } else {
+            _btnStartPauseSave.setImageResource(R.drawable.icon_ride_start);
+        }
+
+        // background
+        if (_running && _paused) {
+            _bottomBar.setBackgroundResource(R.drawable.ride_bg_bottom_full);
+        } else {
+            _bottomBar.setBackgroundResource(R.drawable.ride_bg_bottom_half);
+        }
+
+        // Visibility save / discard buttons
+        int visibility = (_running && _paused) ? View.VISIBLE : View.INVISIBLE;
+        _btnDiscard.setVisibility(visibility);
+        _btnSave.setVisibility(visibility);
+    }
+
+
+
+
+    private void resetView() {
+        _running = false;
+        _paused = false;
+        setBottomBar();
+
+        _txtElapsed.setText("00:00:00");
+        _txtSpeed.setText("0");
+        _txtDistance.setText("0");
+    }
+
+    /*
+
+        BACK BUTTON
+
+     */
 
 
     @Override
@@ -201,7 +223,6 @@ public class RideActivity extends AppCompatActivity {
         onBackPressed();
         return super.onOptionsItemSelected(item);
     }
-
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -223,68 +244,15 @@ public class RideActivity extends AppCompatActivity {
 
 
 
-//    private void exitDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
-//
-//
-//        builder.setCancelable(false);
-//
-//        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
-//            dialog.dismiss();
-//            ActivityCompat.requestPermissions((Activity)_context, new String[]{permission}, PERMISSION_ALL);
-//        });
-//
-//        builder.setNegativeButton(R.string.no, (dialog, which) -> {
-//            dialog.dismiss();
-//            _callback.onPermissionDenied(permission);
-//        });
-//
-//        AlertDialog alert = builder.create();
-//        alert.show();
-//    }
-
-
-    private void init() {
-
-        _running = false;
-        _paused = false;
-
-        _btnStartPauseSave.setImageResource(R.drawable.icon_ride_start);
-        showExtraIcons(false);
-
-        List<TableKvpItem> initData = new ArrayList<>();
-
-        initData.add(new TableKvpItem("time", "MOVING TIME", "00:00:00"));
-        initData.add(new TableKvpItem("distance", "DISTANCE (km)", String.valueOf(_counter)));
-        initData.add(new TableKvpItem("avgSpeed", "AVG SPEED (km/h)", String.valueOf(_counter)));
-        initData.add(new TableKvpItem("speed", "SPEED (km/h)", String.valueOf(_counter)));
-        initData.add(new TableKvpItem("ascend", "TOTAL ASCEND (m)", String.valueOf(_counter)));
-//        list.add(new TableKvpItem("value4", "??? (bpm)", String.valueOf(_counter)));
-//        list.add(new TableKvpItem("value4", "CALORIES (kcal)", String.valueOf(counter)));
-
-        _rva = new TableKvpAdapter(this, initData, R.layout.kvp_grid);
-        RecyclerView rv2 = findViewById(R.id.rv_test2);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return position == 0 ? 2 : 1;
-            }
-        });
-        rv2.setLayoutManager(gridLayoutManager);
-
-        rv2.setAdapter(_rva);
-
-    }
 
 
 
 
+    /*
 
+    SERVICE
 
-
-
+     */
 
 
 
@@ -295,33 +263,149 @@ public class RideActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             RecorderService.LocalBinder binder = (RecorderService.LocalBinder) service;
-            myService = binder.getService();
-            myService.start(data -> printData(data));
+            _recorderService = binder.getService();
+            _recorderService.start(RideActivity.this);
         }
-
         @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        }
+        public void onServiceDisconnected(ComponentName arg0) {}
     };
 
 
-    private void printData(Map<String, Object> data) {
-        System.out.println("onNewData: " + data);
-        System.out.println("onNewData: " + data);
-        System.out.println("onNewData: " + data);
 
-        String time = "time";
 
-        if(data != null)
-            time = Utils.secondsToTime((Integer) data.get("time"));
+    @Override
+    public void onNewData(double speed, double distance, LatLng latLng) {
 
-        // Add formatted data and stuff
-        Map<String, Object> formatted = new LinkedHashMap<>();
-        formatted.put("time", time);
+        sendDataToHud(speed, latLng);
+
 
         runOnUiThread(() -> {
-            _rva.update(formatted);
+            // Polyline
+            List<LatLng> points = _polylineActual.getPoints();
+            points.add(latLng);
+            _polylineActual.setPoints(points);
+
+            //Data fields
+            _txtDistance.setText(Formatter.formatDistance(distance, false));
+            _txtSpeed.setText(Formatter.formatSpeed(speed, false));
+
+            //Image
+            if(_navigator != null) {
+                //_imgNavIcon
+                System.out.println("Nav: " + _navigator.getManeuverString());
+
+                VisorApplication app = (VisorApplication) getApplication();
+
+                _imgManeuverIcon.setImageBitmap(app.getImageForId(_navigator.getManeuverID()));
+                _txtManeuverDistance.setText(Formatter.formatDistance(_navigator.getDistanceToNext(), true));
+            }
         });
     }
+
+    private void sendDataToHud(double speed, LatLng latLng) {
+
+        VisorApplication app = (VisorApplication) getApplication();
+
+        if(_navigator == null) {
+            int speedRounded = (int)speed;
+            app.deviceManager.getHUD().sendSpeed(speedRounded);
+            return;
+        }
+
+        if(_navigator.update(latLng))
+            app.deviceManager.getHUD().sendImg(_navigator.getManeuverID());
+
+    }
+
+    @Override
+    public void onEstimatedTimeChange(int elapsedTime) {
+        runOnUiThread(() -> _txtElapsed.setText(Formatter.secondsAsElapsedTime(elapsedTime)));
+    }
+
+    @Override
+    public void onSavingComplete() {
+        System.out.println("COMPLETE");
+        System.out.println("COMPLETE");
+        System.out.println("COMPLETE");
+        System.out.println("COMPLETE");
+        System.out.println("COMPLETE");
+        System.out.println("COMPLETE");
+    }
+
+
+
+
+
+
+    /*
+
+    MAP
+
+     */
+
+
+
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        VisorApplication app = (VisorApplication) getApplication();
+
+        // Initial coordinates
+        Location last = app.deviceManager.getGPS().getLocation();
+        LatLng latLng;
+
+        if(last == null)
+            latLng = new LatLng(0, 0);
+        else
+            latLng = new LatLng(last.getLatitude(), last.getLongitude());
+
+        _mapMarker = googleMap.addMarker(new MarkerOptions().position(latLng).title("Location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+        _map = googleMap;
+
+        // ROUTE
+        if(app.isNavigationSaved()){
+            // TODO steps
+            _navigator = new NavigatorThingy(app.getSteps());
+            drawRouteOnMap(app.getPolylineRoute());
+        }
+
+
+        // Initialize polyline
+        PolylineOptions polylineOptions = new PolylineOptions()
+                .width(15)
+                .color(Color.RED);
+        _polylineActual = _map.addPolyline(polylineOptions);
+
+        _gps = app.deviceManager.getGPS();
+        _gps.setValueChangedListener(() -> {
+            Location location = _gps.getLocation();
+            if (_mapMarker != null && location != null) {
+                // Update the marker's position
+                _mapMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+                _map.moveCamera(CameraUpdateFactory.newLatLng(_mapMarker.getPosition()));
+            }
+        });
+    }
+
+
+    private void drawRouteOnMap(List<LatLng> polyline) {
+        System.out.println("DRAWING");
+
+        runOnUiThread(() -> {
+            if (_map != null) {
+
+                PolylineOptions polylineOptions = new PolylineOptions()
+                        .addAll(polyline)
+                        .width(10)
+                        .color(Color.BLUE);
+
+                _polylineRoute = _map.addPolyline(polylineOptions);
+            }
+        });
+    }
+
+
+
 
 }
