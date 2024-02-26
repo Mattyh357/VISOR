@@ -71,7 +71,7 @@ public class MySensorGPS extends MySensor {
      * Starts location updates with specified interval and priority.
      */
     @SuppressLint("MissingPermission")
-    public void startLocationUpdates() {
+    private void startLocationUpdates() {
         System.out.println("Starting location updates");
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(INTERVAL);
@@ -85,7 +85,7 @@ public class MySensorGPS extends MySensor {
     /**
      * Stops receiving location updates.
      */
-    public void stopLocationUpdates() {
+    private void stopLocationUpdates() {
         _fusedLocationProviderClient.removeLocationUpdates(_locationCallback);
     }
 
