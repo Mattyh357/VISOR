@@ -22,6 +22,7 @@ public class MySensor {
     public static final int TYPE_CAD = 7;
     public static final int TYPE_PWR = 8;
 
+
     public enum Status {
         NotFound,
         Searching,
@@ -35,6 +36,9 @@ public class MySensor {
         _address = address;
         _status = Status.Connecting;
         _type = type;
+    }
+
+    public void activate() {
     }
 
     public void setStatusChangeListener(SensorStatusListener listener) {
