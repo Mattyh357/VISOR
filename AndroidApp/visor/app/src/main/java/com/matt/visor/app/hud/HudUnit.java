@@ -1,4 +1,11 @@
-// TODO Comments this
+/**
+ * This class is part of the V.I.S.O.R app.
+ * The HudUnit Class is essentially a wrapper around HudBluetoothManager. It not only adds better
+ * interface for sending data, but also handles Status of the device.
+ *
+ * @version 1.0
+ * @since 21/02/2024
+ */
 
 package com.matt.visor.app.hud;
 
@@ -82,7 +89,7 @@ public class HudUnit implements HudBluetoothListener{
      * @param speed The speed value to send.
      */
     public void sendSpeed(int speed) {
-        _bt.sendData(_bt.SPEED_INSTRUCTION, speed);
+        _bt.sendData(InstructionsByte.SPEED_INSTRUCTION, speed);
     }
 
     /**
@@ -91,7 +98,7 @@ public class HudUnit implements HudBluetoothListener{
      * @param image The image identifier to send.
      */
     public void sendImg(int image) {
-        _bt.sendData(_bt.NAVIGATION_IMG_INSTRUCTION, image);
+        _bt.sendData(InstructionsByte.NAVIGATION_IMG_INSTRUCTION, image);
     }
 
     /**
