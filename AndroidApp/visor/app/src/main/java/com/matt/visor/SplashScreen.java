@@ -1,8 +1,6 @@
 /**
  * This class is part of the V.I.S.O.R app.
- * Splash screen - Responsible for loading saved configuration and devices
- *
- * TODO AI image!
+ * Splash screen - Responsible for loading saved configuration, devices, and navigation images.
  *
  * @version 1.0
  * @since 0/01/2024
@@ -11,6 +9,7 @@
 package com.matt.visor;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
@@ -23,6 +22,7 @@ import com.matt.visor.app.VisorApplication;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
 
     private ProgressBar _progressBar;
@@ -85,15 +85,13 @@ public class SplashScreen extends AppCompatActivity {
 
 
     /**
-     * TODO comments and implementation
+     * Load everything that needs to be loaded
      */
     private void loadStuff() {
         VisorApplication app = (VisorApplication) getApplication();
         app.loadDevices(this);
 
         app.LoadImages();
-
-//        app.loadListOfJourneys(this);
     }
 
 
@@ -131,7 +129,6 @@ public class SplashScreen extends AppCompatActivity {
      */
     private void startApp() {
         Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-//        Intent intent = new Intent(SplashScreen.this, RideActivity.class);
         startActivity(intent);
     }
 
