@@ -1,4 +1,10 @@
-// TODO remove after testing of HUD image sender
+/**
+ * This class is part of the V.I.S.O.R app.
+ * Represents user interface for testing connected HUD unit with the options of sending speed or images.
+ *
+ * @version 1.0
+ * @since 08/02/2024
+ */
 
 package com.matt.visor.fragments.home;
 
@@ -7,50 +13,37 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.matt.visor.app.CustomBinProcessor;
-import com.matt.visor.app.HudUnit;
-import com.matt.visor.app.SensorStatusListener;
+import com.matt.visor.R;
+import com.matt.visor.TableKvpAdapter;
+import com.matt.visor.TableKvpItem;
+import com.matt.visor.TableKvpOnClickListener;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentHudDetailBinding;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HudDetailFragment extends Fragment implements View.OnClickListener, RecyclerViewAdapter.OnImageButtonClickListener{
+public class HudDetailFragment extends Fragment implements TableKvpOnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private FragmentHudDetailBinding _binding;
+    private TextView _txt_status;
+    private TextView _txt_speed;
 
-
-
-    //TODO test
-    private TextView txt_status;
-    private TextView txt_speed;
-
-    private SeekBar sb_speed;
-
-    private Button btn_sendSpeed;
-    private Button btn_connect;
-
-    private Button but_sendBig;
-
-
-    CustomBinProcessor _cbp;
-    //TODO test
-
-
-
+    /**
+     * Initializes the fragment's view and sets up UI components.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @return The root View for the fragment's layout.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
@@ -58,142 +51,86 @@ public class HudDetailFragment extends Fragment implements View.OnClickListener,
         _binding = FragmentHudDetailBinding.inflate(inflater, container, false);
         View root = _binding.getRoot();
 
-        txt_status = _binding.txtStatus;
-        txt_speed = _binding.txtSpeed;
+        // Txt
+        _txt_status = _binding.txtStatus;
+        _txt_speed = _binding.txtSpeed;
+        _txt_speed.setText("50");
 
-        sb_speed = _binding.sbSpeed;
-        sb_speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                txt_speed.setText(String.valueOf(progress));
-            }
+        // Seekbar
+        SeekBar sb_speed = _binding.sbSpeed;
+        sb_speed.setOnSeekBarChangeListener(this);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
+        // Buttons
+        _binding.btnSendSpeed.setOnClickListener(v -> sendDataSpeed(sb_speed.getProgress()));
 
-        btn_sendSpeed = _binding.btnSendSpeed;
-        btn_sendSpeed.setOnClickListener(this);
+        // Images
+        List<TableKvpItem<?>> data = new ArrayList<>();
 
-        btn_connect = _binding.btnConnect;
-        btn_connect.setOnClickListener(this);
-
-        but_sendBig = _binding.btnSendBIG;
-        but_sendBig.setOnClickListener(this);
-
-
-        // Custom binary file
-        File file = new File(getActivity().getFilesDir(), "images.cbi");
-        _cbp = new CustomBinProcessor(file);
+        int i = 0;
+        for (Bitmap bitmap :  app.get_listOfImages()) {
+            data.add(new TableKvpItem<>(String.valueOf(i),null, bitmap));
+            i++;
+        }
 
         // Recycler
-        RecyclerViewAdapter _rva = new RecyclerViewAdapter(getContext(), this, GetImageList());
-        _binding.imageRecycler.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        TableKvpAdapter _rva = new TableKvpAdapter(getContext(), data, R.layout.kvp_image, this);
+        _binding.imageRecycler.setLayoutManager(new GridLayoutManager(getContext(), 4));
         _binding.imageRecycler.setAdapter(_rva);
 
+        // Update status
+        app.deviceManager.getHUD().setStatusChangeListener(() -> _txt_status.setText(app.deviceManager.getHUD().getStatusString()));
 
-
-
-        // IMPORTANT STUFF
-
-        app.deviceManager.getHUD().setStatusChangeListener(new SensorStatusListener() {
-            @Override
-            public void onChange() {
-                txt_status.setText(app.deviceManager.getHUD().getStatusString());
-            }
-        });
-
-
-
-
-        // meh
+        //
         return root;
     }
 
-
-    private List<ImageButtonItem> GetImageList() {
-        List<ImageButtonItem> list = new ArrayList<>();
-
-        for (Bitmap bitmap : _cbp.getListOfBitmaps()) {
-            list.add(new ImageButtonItem("X", bitmap));
-        }
-
-        return list;
-    }
-
-
-    private void sendBigData() {
-
-        VisorApplication app = (VisorApplication) requireActivity().getApplication();
-
-        File file = new File(getActivity().getFilesDir(), "images.cbi");
-
-        byte[] data = new byte[(int) file.length()];
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-            fis.read(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        app.deviceManager.getHUD().sendBootData(data);
-
-
-    }
-
+    /**
+     * Sends the current speed setting to the device.
+     *
+     * @param speed The speed value to send.
+     */
     private void sendDataSpeed(int speed) {
+        VisorApplication app = (VisorApplication) requireActivity().getApplication();
+        app.deviceManager.getHUD().sendSpeed(speed);
+    }
+
+    /**
+     * Handles item click events in the TableKvpAdapter and sends image to the device.
+     *
+     * @param item The TableKvpItem that was clicked.
+     */
+    @Override
+    public void onItemClick(TableKvpItem item) {
+        System.out.println("On item click : " + item.getKey());
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-
-        app.deviceManager.getHUD().sendData(HudUnit.SPEED_INSTRUCTION, speed);
+        app.deviceManager.getHUD().sendImg(Integer.parseInt(item.getKey()));
     }
 
-
-
-
-    @Override
-    public void onClick(View view) {
-        if(view.getId() == btn_connect.getId()) {
-            VisorApplication app = (VisorApplication) requireActivity().getApplication();
-
-            app.deviceManager.getHUD().connect();
-            return;
-        }
-
-        if(view.getId() == btn_sendSpeed.getId()) {
-            sendDataSpeed(sb_speed.getProgress());
-        }
-        else if(view.getId() == but_sendBig.getId()){
-            sendBigData();
-        }
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        Toast.makeText(getContext(), "img: " + position, Toast.LENGTH_SHORT).show();
-
-        VisorApplication app = (VisorApplication) requireActivity().getApplication();
-
-        app.deviceManager.getHUD().sendData(HudUnit.NAVIGATION_IMG_INSTRUCTION,position);
-    }
-
-
-
-
+    /**
+     * Cleans up resources when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         _binding = null;
     }
+
+    /**
+     * Updates the displayed speed text when the seek bar progress changes.
+     *
+     * @param seekBar The SeekBar whose progress has changed.
+     * @param progress The current progress level.
+     * @param fromUser True if the progress change was initiated by the user.
+     */
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        _txt_speed.setText(String.valueOf(progress));
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {}
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {}
 }
