@@ -33,9 +33,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.matt.visor.R;
 import com.matt.visor.TableKvpAdapter;
 import com.matt.visor.TableKvpItem;
-import com.matt.visor.Utils;
 import com.matt.visor.app.MySensorGPS;
 import com.matt.visor.app.VisorApplication;
+import com.matt.visor.app.recorder.Formatter;
 import com.matt.visor.databinding.FragmentSensorGpsBinding;
 
 import java.util.ArrayList;
@@ -89,16 +89,16 @@ public class SensorGpsFragment extends Fragment {
 
 
         // Details init
-        List<TableKvpItem> data = new ArrayList<>();
-        data.add(new TableKvpItem("latitude", "Latitude", ""));
-        data.add(new TableKvpItem("longitude", "Longitude", ""));
-        data.add(new TableKvpItem("altitude", "Altitude", ""));
-        data.add(new TableKvpItem("speed", "Speed", ""));
-        data.add(new TableKvpItem("timeInSeconds", "Last update", ""));
+        List<TableKvpItem<?>> data = new ArrayList<>();
+        data.add(new TableKvpItem<>("latitude", "Latitude", ""));
+        data.add(new TableKvpItem<>("longitude", "Longitude", ""));
+        data.add(new TableKvpItem<>("altitude", "Altitude", ""));
+        data.add(new TableKvpItem<>("speed", "Speed", ""));
+        data.add(new TableKvpItem<>("timeInSeconds", "Last update", ""));
 
 
         // RecyclerView
-        _rva = new TableKvpAdapter(getContext(), data, R.layout.kvp_list);
+        _rva = new TableKvpAdapter(getContext(), data, R.layout.kvp_list, null);
         _binding.sensorGpsTableKvp.setLayoutManager(new LinearLayoutManager(getContext()));
         _binding.sensorGpsTableKvp.setAdapter(_rva);
 
@@ -114,7 +114,6 @@ public class SensorGpsFragment extends Fragment {
      * Handles map changes by updating the marker's position to the new location and passes the
      * location to a method that prints is.
      */
-
     public void onMapChange() {
         Location location = _gps.getLocation();
 
@@ -147,9 +146,9 @@ public class SensorGpsFragment extends Fragment {
         // TODO units
         _rva.update("latitude",  location.getLatitude());
         _rva.update("longitude",  location.getLongitude());
-        _rva.update("altitude",  location.getAltitude());
-        _rva.update("speed", Utils.formatSpeed(location.getSpeed()) + " Km/h");
-        _rva.update("timeInSeconds", Utils.formatUnixToDateAndTime(location.getTime()));
+        _rva.update("altitude",  Formatter.formatDistance(location.getAltitude(), true));
+        _rva.update("speed", Formatter.formatSpeed(location.getSpeed(), true));
+        _rva.update("timeInSeconds", Formatter.epochToDateAndTime(location.getTime() / 1000));
     }
 
 
