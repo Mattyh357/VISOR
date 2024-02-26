@@ -53,7 +53,7 @@ public class HistoryDetailFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if(bundle != null){
-            String id = bundle.getString("JourneyID"); // TODO DO NOT HARDCODE
+            String id = bundle.getString("JourneyID");
 
             System.out.println("ID: " + id);
 
