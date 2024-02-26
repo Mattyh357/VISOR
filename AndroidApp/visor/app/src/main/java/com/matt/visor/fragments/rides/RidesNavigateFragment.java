@@ -23,15 +23,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.matt.visor.GoogleMapsAPI.DirectionsCallback;
-import com.matt.visor.GoogleMapsAPI.GoogleDirectionsAPI;
-import com.matt.visor.GoogleMapsAPI.Waypoint;
+import com.matt.visor.GoogleMap.DirectionsCallback;
+import com.matt.visor.GoogleMap.GoogleDirectionsAPI;
+import com.matt.visor.GoogleMap.Step;
 import com.matt.visor.R;
 import com.matt.visor.RideActivity;
 import com.matt.visor.app.MySensorGPS;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentRidesNavigateBinding;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class RidesNavigateFragment extends Fragment {
@@ -90,7 +92,7 @@ public class RidesNavigateFragment extends Fragment {
 
         // Buttons
         _binding.ridesNavigateBtnUpdateStart.setOnClickListener(v -> updateStartPosition());
-        _binding.ridesNavigateBtnGetRoute.setOnClickListener(v -> getRoute());
+        _binding.ridesNavigateBtnClearRoute.setOnClickListener(v -> clearRoute());
         _binding.ridesNavigateBtnStartRide.setOnClickListener(v -> {
         // TODO bundle the route...
 
@@ -120,8 +122,6 @@ public class RidesNavigateFragment extends Fragment {
 
         clearRoute();
 
-        String key = getApiKey();
-
         LatLng origin = _mapMarkerOrigin.getPosition();
         LatLng destination = _mapMarkerDestination.getPosition();
 
@@ -130,13 +130,19 @@ public class RidesNavigateFragment extends Fragment {
         destination = new LatLng(56.4635, -2.9737);
 
 
-        GoogleDirectionsAPI googleDirectionsAPI = new GoogleDirectionsAPI(key);
+        GoogleDirectionsAPI googleDirectionsAPI = new GoogleDirectionsAPI(getApiKey());
 
         googleDirectionsAPI.requestRoute(origin, destination, new DirectionsCallback() {
             @Override
-            public void onSuccess(List<Waypoint> waypoints, List<LatLng> polylineRoute) {
-                printHumanReadableDirections(waypoints);
+            public void onSuccess(List<Step> steps, List<LatLng> polylineRoute) {
+                printHumanReadableDirections(steps); // TODO remove
                 drawRouteOnMap(polylineRoute);
+
+                // TODO better way save
+
+                VisorApplication app = (VisorApplication) requireActivity().getApplication();
+                app.saveNavigation(steps, polylineRoute);
+
             }
 
             @Override
@@ -153,25 +159,10 @@ public class RidesNavigateFragment extends Fragment {
     }
 
 
-    private void printHumanReadableDirections(List<Waypoint> list) {
+    private void printHumanReadableDirections(List<Step> list) {
 
-        for (Waypoint waypoint : list) {
+        for (Step waypoint : list) {
             StringBuilder waypointDetails = new StringBuilder();
-
-            // Instruction
-            waypointDetails.append("Instruction: ").append(waypoint.instruction).append("\n");
-
-            // Distance
-            waypointDetails.append("Distance: ").append(waypoint.distanceText).append(" (")
-                    .append(waypoint.distanceValue).append(" meters)").append("\n");
-
-            // Duration
-            waypointDetails.append("Duration: ").append(waypoint.durationText).append(" (")
-                    .append(waypoint.durationValue).append(" seconds)").append("\n");
-
-            // Start Location
-            waypointDetails.append("Start Location: Lat ").append(waypoint.startLocation.latitude)
-                    .append(", Lng ").append(waypoint.startLocation.longitude).append("\n");
 
             // End Location
             waypointDetails.append("End Location: Lat ").append(waypoint.endLocation.latitude)
@@ -187,10 +178,6 @@ public class RidesNavigateFragment extends Fragment {
         }
 
     }
-
-
-
-
 
     private void drawRouteOnMap(List<LatLng> polyline) {
         System.out.println("DRAWING");
@@ -214,18 +201,39 @@ public class RidesNavigateFragment extends Fragment {
         Location location = _gps.getLocation();
 
         if (_mapMarkerOrigin != null && location != null) {
-            LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
             // Update the marker's position
-            _mapMarkerOrigin.setPosition(newLocation);
-            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, DEFAULT_ZOOM));
+            _mapMarkerOrigin.setPosition(latLng);
+            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
             // TODO Only change the zoom when it's actually relevant
+
+            // TODO automated
+
+
+            // Fill values
+            String  lat = new BigDecimal(Double.toString(latLng.latitude)).setScale(3, RoundingMode.HALF_UP).toString();
+            String  lon = new BigDecimal(Double.toString(latLng.longitude)).setScale(3, RoundingMode.HALF_UP).toString();
+            _binding.ridesNavigateStartLat.setText(lat);
+            _binding.ridesNavigateStartLon.setText(lon);
         }
+
     }
 
     private void onMapClick(LatLng latLng) {
         clearRoute();
         _mapMarkerDestination.setPosition(latLng);
+
+        // Fill values
+        String  lat = new BigDecimal(Double.toString(latLng.latitude)).setScale(3, RoundingMode.HALF_UP).toString();
+        String  lon = new BigDecimal(Double.toString(latLng.longitude)).setScale(3, RoundingMode.HALF_UP).toString();
+        _binding.ridesNavigateDestinationLat.setText(lat);
+        _binding.ridesNavigateDestinationLon.setText(lon);
+
+        // Request route
+        getRoute();
+
+        _mapMarkerDestination.setVisible(true);
     }
 
     private void clearRoute() {
@@ -233,6 +241,11 @@ public class RidesNavigateFragment extends Fragment {
         if (currentPolyline != null) {
             currentPolyline.remove();
         }
+
+        VisorApplication app = (VisorApplication) requireActivity().getApplication();
+        app.unSaveNavigation();
+
+        _mapMarkerDestination.setVisible(false);
     }
 
 
