@@ -1,7 +1,6 @@
 /**
  * This class is part of the V.I.S.O.R app.
  * Permission helper - Responsible checking and requesting all permissions in a list.
- *
  * Requires "onRequestPermissionsResult" to be passed from the activity class!
  *
  * @version 1.0
@@ -25,9 +24,9 @@ public class PermissionHelper {
 
     private static final int PERMISSION_ALL = 1;
 
-    private Context _context;
-    private List<String> _list;
-    private Callback _callback;
+    private final Context _context;
+    private final List<String> _list;
+    private final Callback _callback;
 
     private boolean _showInfoDialog = true;
 
