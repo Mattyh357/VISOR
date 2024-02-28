@@ -39,7 +39,7 @@ public class Waypoint {
         _latitude = location.getLatitude();
         _longitude = location.getLongitude();
         _altitude = location.getAltitude() / 1000; // m -> km
-        _speed = location.getSpeed() * 3.6; // TODO mps -> km/s
+        _speed = location.getSpeed() * 3.6; // m/s -> km/s
         _time = location.getTime() / 1000; // ms -> s
     }
 
