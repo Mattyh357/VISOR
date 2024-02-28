@@ -8,22 +8,24 @@
  */
 
 package com.matt.visor.app;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class CustomBinProcessor {
     int scaleFactor = 6;
-    private List<byte[]> _list = new ArrayList<>();
+    private final List<byte[]> _list = new ArrayList<>();
     private int _width = 0;
     private int _height = 0;
 
@@ -87,7 +89,7 @@ public class CustomBinProcessor {
      * @param filepath The path to the binary file containing image data.
      */
     private void processBinFile(String filepath) {
-        try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filepath))) {
+        try (DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(Paths.get(filepath)))) {
 
             // Read and convert integers assuming little-endian format
             byte[] intBuffer = new byte[4];
@@ -99,7 +101,7 @@ public class CustomBinProcessor {
             dataInputStream.readFully(intBuffer);
             _height = (int)(ByteBuffer.wrap(intBuffer).order(ByteOrder.LITTLE_ENDIAN).getInt() & 0xffffffffL);
 
-            long imageSize = _width * _height / 8;
+            long imageSize = (long) _width * _height / 8;
 
             for (int i = 0; i < numberOfImages; ++i) {
                 byte[] imageData = new byte[(int) imageSize];
