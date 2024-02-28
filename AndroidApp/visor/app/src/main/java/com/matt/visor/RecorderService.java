@@ -18,7 +18,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
@@ -45,10 +44,6 @@ public class RecorderService extends Service {
     }
 
 
-    // Binder given to clients
-
-
-
     /**
      * Returns the binder to allow interaction with the service.
      *
@@ -60,12 +55,13 @@ public class RecorderService extends Service {
         return binder;
     }
 
-    /**
-     * Binder class to provide the RecorderService instance to clients.
-     *
-     * @return The current instance of RecorderService.
-     */
+
     public class LocalBinder extends Binder {
+        /**
+         * Binder class to provide the RecorderService instance to clients.
+         *
+         * @return The current instance of RecorderService.
+         */
         RecorderService getService() {
             return RecorderService.this;
         }
@@ -126,19 +122,22 @@ public class RecorderService extends Service {
      */
     private Notification getNotification() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder =new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("V.I.S.O.R - RIDE IN PROGRESS")
                 .setContentText("Ride in progress.")
-                .setSmallIcon(R.drawable.launcher_icon) // TODO better icon
-//                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.launcher_icon)
+                .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setOnlyAlertOnce(true)
                 .setSilent(true);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder.setChannelId(CHANNEL_ID);
+        builder.setChannelId(CHANNEL_ID);
 
         return builder.build();
     }
@@ -148,15 +147,13 @@ public class RecorderService extends Service {
      * Creates a notification channel for the foreground service.
      */
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
+        NotificationChannel serviceChannel = new NotificationChannel(
+                CHANNEL_ID,
+                "Foreground Service Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
 
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
-        }
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(serviceChannel);
     }
 }
