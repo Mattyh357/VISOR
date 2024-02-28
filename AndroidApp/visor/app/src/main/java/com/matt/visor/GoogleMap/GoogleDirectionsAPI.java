@@ -2,6 +2,8 @@
  * This class is part of the V.I.S.O.R app.
  * GoogleDirectionsAPI is responsible for requesting and processing Google direction API.
  * Requires API key.
+ * Code for parsing steps and polyline is based on:
+ * https://gist.github.com/saeedsh92/eaf249741e02c60bc0faf9ab6196925c
  *
  * @version 1.0
  * @since 20/02/2024
@@ -24,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GoogleDirectionsAPI {
 
@@ -69,7 +72,7 @@ public class GoogleDirectionsAPI {
 
                     // Parse
                     List<Step> list = parseSteps(response.toString());
-                    List<LatLng> polylineRoute = decodePolyline(extractPolyline(response.toString()));
+                    List<LatLng> polylineRoute = decodePolyline(Objects.requireNonNull(extractPolyline(response.toString())));
 
 
                     callback.onSuccess(list, polylineRoute);
@@ -110,7 +113,6 @@ public class GoogleDirectionsAPI {
      *
      * @param encoded The encoded polyline string.
      * @return A list of LatLng points representing the polyline.
-     * TODO ADD REFERENCE TO THE ORIGINAL!!!!!!!
      */
     private List<LatLng> decodePolyline(String encoded) {
         List<LatLng> poly = new ArrayList<>();
@@ -167,9 +169,6 @@ public class GoogleDirectionsAPI {
                 JSONArray steps = leg.getJSONArray("steps");
 
                 for (int j = 0; j < steps.length(); j++) {
-
-                    // TODO extract
-
                     JSONObject stepsJSONObject = steps.getJSONObject(j);
                     Step step = new Step();
 
@@ -198,16 +197,13 @@ public class GoogleDirectionsAPI {
      * @throws MalformedURLException If the constructed URL is not valid.
      */
     private URL getUrl(LatLng origin, LatLng destination) throws MalformedURLException {
-        //TODO if nulls
+        String urlStringBuilder = API_URL + "origin=" +
+                origin.latitude + "," + origin.longitude +
+                "&destination=" +
+                destination.latitude + "," + destination.longitude +
+                "&key=" + _APIkey;
 
-        StringBuilder urlStringBuilder = new StringBuilder(API_URL);
-        urlStringBuilder.append("origin=");
-        urlStringBuilder.append(origin.latitude).append(",").append(origin.longitude);
-        urlStringBuilder.append("&destination=");
-        urlStringBuilder.append(destination.latitude).append(",").append(destination.longitude);
-        urlStringBuilder.append("&key=").append(_APIkey);
-
-        return new URL(urlStringBuilder.toString());
+        return new URL(urlStringBuilder);
     }
 
 
