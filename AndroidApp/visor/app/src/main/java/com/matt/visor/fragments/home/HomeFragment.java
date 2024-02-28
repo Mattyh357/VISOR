@@ -41,7 +41,7 @@ public class HomeFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
+     * @return root
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
@@ -60,16 +60,12 @@ public class HomeFragment extends Fragment {
             navController.navigate(R.id.navigation_hud_detail);
         });
         _binding.homeHudStatus.setText(app.deviceManager.getHUD().getStatusString());
-        // TODO navigation
-        //TEST END
-
 
         // GPS
         _binding.homeBtnGps.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_sensor_gps);
         });
-        // TODO navigation
         app.deviceManager.getGPS().setStatusChangeListener(() -> {
             _binding.homeGpsStatus.setText(app.deviceManager.getGPS().getStatusString());
         });
@@ -85,11 +81,6 @@ public class HomeFragment extends Fragment {
         // return
         return root;
     }
-
-
-    // TODO remove listener for sensors?
-    // TODO on pause and resume
-
 
     @Override
     public void onDestroyView() {
