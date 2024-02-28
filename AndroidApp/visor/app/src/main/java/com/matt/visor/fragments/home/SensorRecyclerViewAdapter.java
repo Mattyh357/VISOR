@@ -1,4 +1,12 @@
-// TODO comments and stuff... plus perhaps, dunno.. something :)
+/**
+ * This class is part of the V.I.S.O.R app.
+ * SensorRecyclerViewAdapter extends RecyclerView.Adapter to provide an adapter for sensor item
+ * with an onclickListener that navigates to the appropriate fragment.
+ *
+ * @version 1.0
+ * @since 21/02/2024
+ */
+
 
 package com.matt.visor.fragments.home;
 
@@ -25,8 +33,8 @@ import java.util.List;
 
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.SensorHolder>{
 
-    private Context _context;
-    private List<MySensor> _data;
+    private final Context _context;
+    private final List<MySensor> _data;
 
     public SensorRecyclerViewAdapter(Context context, List<MySensor> data) {
         _context = context;
@@ -55,7 +63,6 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         holder.cardView.setOnClickListener(view -> {
             // Bundle
             Bundle bundle = new Bundle();
-            MySensor sensor = _data.get(position);
             bundle.putInt("SensorType", position);
 
             //Navigate
@@ -63,13 +70,7 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
 
             if (_data.get(position).hasAddress())
                 navController.navigate(R.id.navigation_sensor_detail, bundle);
-//            else
-//                navController.navigate(R.id.navigation_sensor_add, bundle);
-
         });
-
-
-
     }
 
         @Override
@@ -93,10 +94,10 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         public SensorHolder(View itemView) {
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.sensor_item_name) ;
-            status = (TextView) itemView.findViewById(R.id.sensor_item_status) ;
-            image = (ImageView) itemView.findViewById(R.id.sensor_item_image);
-            cardView = (CardView) itemView.findViewById(R.id.sensor_item_id);
+            name = itemView.findViewById(R.id.sensor_item_name) ;
+            status = itemView.findViewById(R.id.sensor_item_status) ;
+            image = itemView.findViewById(R.id.sensor_item_image);
+            cardView = itemView.findViewById(R.id.sensor_item_id);
 
 
         }
