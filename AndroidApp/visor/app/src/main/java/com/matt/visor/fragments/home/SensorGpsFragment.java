@@ -50,7 +50,6 @@ public class SensorGpsFragment extends Fragment {
     private Marker _mapMarker;
     private GoogleMap _map;
     private MySensorGPS _gps;
-    private LatLng _lastLocation = new LatLng(0,0);
     private TableKvpAdapter _rva;
 
 
@@ -120,15 +119,11 @@ public class SensorGpsFragment extends Fragment {
         if (_mapMarker != null && location != null) {
             LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-            // Only change on actual update
-            if(!_lastLocation.equals(newLocation)){
-                _lastLocation = newLocation;
+            // Update the marker's position
+            _mapMarker.setPosition(newLocation);
+            _map.moveCamera(CameraUpdateFactory.newLatLng(_mapMarker.getPosition()));
 
-                // Update the marker's position
-                _mapMarker.setPosition(newLocation);
-                _map.moveCamera(CameraUpdateFactory.newLatLng(_mapMarker.getPosition()));
-                displayDetails(location);
-            }
+            displayDetails(location);
         }
     }
 
@@ -144,8 +139,8 @@ public class SensorGpsFragment extends Fragment {
 
         // Format
         // TODO units
-        _rva.update("latitude",  location.getLatitude());
-        _rva.update("longitude",  location.getLongitude());
+        _rva.update("latitude",  String.valueOf(location.getLatitude()));
+        _rva.update("longitude",  String.valueOf(location.getLongitude()));
         _rva.update("altitude",  Formatter.formatDistance(location.getAltitude(), true));
         _rva.update("speed", Formatter.formatSpeed(location.getSpeed(), true));
         _rva.update("timeInSeconds", Formatter.epochToDateAndTime(location.getTime() / 1000));
