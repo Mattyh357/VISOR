@@ -22,8 +22,8 @@ import com.matt.visor.R;
 import com.matt.visor.TableKvpAdapter;
 import com.matt.visor.TableKvpItem;
 import com.matt.visor.app.recorder.Formatter;
-import com.matt.visor.app.recorder.JourneyLoaderAndSaver;
 import com.matt.visor.app.recorder.Journey;
+import com.matt.visor.app.recorder.JourneyLoaderAndSaver;
 import com.matt.visor.databinding.FragmentHistoryDetailBinding;
 
 import java.util.ArrayList;
@@ -46,23 +46,12 @@ public class HistoryDetailFragment extends Fragment {
         _binding = FragmentHistoryDetailBinding.inflate(inflater, container, false);
         View root = _binding.getRoot();
 
-
-        // TODO if bundle null or journey doesn't exist exit and stuff
-
-        Journey journey = new Journey();
-
         Bundle bundle = getArguments();
         if(bundle != null){
-            String id = bundle.getString("JourneyID");
-
-            System.out.println("ID: " + id);
-
-            journey = JourneyLoaderAndSaver.getJourneyById(id, getContext());
-
+            Journey journey = JourneyLoaderAndSaver.getJourneyById(bundle.getString("JourneyID"), getContext());
             printData(journey);
             updateImage(journey.getImage());
         }
-
         return root;
     }
 
@@ -94,23 +83,21 @@ public class HistoryDetailFragment extends Fragment {
         System.out.println("Time started: " + journey.getTimeStarted() + " - " +  timeStart);
         System.out.println("Time ended: " + journey.getTimeFinished() + " - " +  timeEnd);
 
-        // TODO more details
-
-        String speedMax     = Formatter.formatDistance(journey.getTotalDistance(), true);
         String speedAvg     = Formatter.formatDistance(journey.getTotalDistance(), true);
-        String eleUp        = Formatter.formatDistance(journey.getTotalDistance(), true);
-        String eleDown      = Formatter.formatDistance(journey.getTotalDistance(), true);
+        String eleUp        = Formatter.formatDistance(journey.getTotalElevationClimbed(), true);
+        String eleDown      = Formatter.formatDistance(journey.getGet_totalElevationDescended(), true);
 
         List<TableKvpItem<?>> data = new ArrayList<>();
         data.add(new TableKvpItem<>("", "Distance", distance));
-        data.add(new TableKvpItem<>("", "timeTotal", timeTotal));
-        data.add(new TableKvpItem<>("", "timeStart", timeStart));
-        data.add(new TableKvpItem<>("", "timeEnd", timeEnd));
 
+        data.add(new TableKvpItem<>("", "Duration", timeTotal));
+        data.add(new TableKvpItem<>("", "Started", timeStart));
+        data.add(new TableKvpItem<>("", "Ended", timeEnd));
 
-        data.add(new TableKvpItem<>("", "etc", "123"));
-        data.add(new TableKvpItem<>("", "Speed", "123"));
-        data.add(new TableKvpItem<>("", "Last update", "123"));
+        data.add(new TableKvpItem<>("", "Average speed", speedAvg));
+
+        data.add(new TableKvpItem<>("", "Elevation climbed", eleUp));
+        data.add(new TableKvpItem<>("", "Elevation descended", eleDown));
 
 
         // RecyclerView
