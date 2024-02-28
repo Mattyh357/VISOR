@@ -11,10 +11,12 @@ package com.matt.visor;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.matt.visor.app.VisorApplication;
@@ -32,6 +34,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private PermissionHelper _permissionHelper;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
