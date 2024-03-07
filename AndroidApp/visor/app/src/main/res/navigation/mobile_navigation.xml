@@ -30,11 +30,6 @@
         tools:layout="@layout/fragment_config" />
 
 
-
-
-
-
-
     <!--  RIDES  -->
 
 
@@ -55,14 +50,6 @@
         android:name="com.matt.visor.fragments.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
-
-    <fragment
-        android:id="@+id/navigation_config"
-        android:name="com.matt.visor.fragments.config.ConfigFragment"
-        android:label="@string/title_config"
-        tools:layout="@layout/fragment_config" />
-
-
 
 
     <!--  History  -->
