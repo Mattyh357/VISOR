@@ -5,14 +5,15 @@
 #pragma once
 #include "Arduino.h"
 #include "Display.h"
-#include "QRGen.h"
+//#include "QRGen.h"
 
 #include "Bluetooth.h"
 #include "ImageProcessor.h"
+#include "MyImage.h"
 
 
 
-#define UPDATE_INTERVAL 1000
+#define UPDATE_INTERVAL 500
 #define SERIAL_BOUD 115200
 
 #define PIN_CS     5  // Orange Wire (OCS)
@@ -55,6 +56,8 @@ private:
 
 
     int i = 0;
+
+    uint8_t _prevPrintType = 0;
 
 };
 
