@@ -201,11 +201,10 @@ void Display::drawImage(sImage *Image) {
 
 void Display::drawImageTest(MyImage image) {
 
-    // TODO needs to draw in the middle of the screen
-    // TODO get rid of the vector that's there for no reason :)
+    int scaleFactor = 1;
+    int offsetX = (_width - (image.getWidth() * scaleFactor)) / 2;
+    int offsetY = (_height - (image.getHeight() * scaleFactor)) / 2;
 
-    int scaleFactor = 2;
-    
     for (uint16_t y = 0; y < scaleFactor * image.getHeight(); y++) {
         for (uint16_t x = 0; x < scaleFactor * image.getWidth(); x++) {
             uint16_t origX = x / scaleFactor;
@@ -219,9 +218,9 @@ void Display::drawImageTest(MyImage image) {
             bool isPixelSet = pixelValue & mask;
 
             if (isPixelSet) {
-                drawPixel(x, y, BLACK); // Draw a black pixel
+                drawPixel(offsetX + x, offsetY + y, WHITE); // Draw a black pixel
             } else {
-                drawPixel(x, y, WHITE); // Draw a white pixel
+                drawPixel(offsetX + x, offsetY + y, BLACK); // Draw a white pixel
             }
         }
     }
@@ -321,6 +320,9 @@ void Display::drawChar(uint16_t x, uint16_t y, const char c, sFont *Font, uint16
 }
 
 void Display::drawPixel(int16_t x, int16_t y, uint16_t color) {
+    // Flip horizontally
+    x = _width - 1 - x;
+
     if ((x >= 0) && (x < _width) && (y >= 0) && (y < _height)) {
         setAddrWindow(x, y, 1, 1);
         spiWrite16(color);
