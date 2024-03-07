@@ -6,8 +6,6 @@
  * @since 03/04/2023
  */
 
-
-
 package com.matt.visor;
 
 import android.os.Bundle;
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         // AppBar
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_rides, R.id.navigation_history, R.id.navigation_config)
+                R.id.navigation_home, R.id.navigation_rides, R.id.navigation_history)
                 .build();
 
         // NavController
