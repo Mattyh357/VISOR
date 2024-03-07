@@ -41,11 +41,6 @@ public:
     void sendData(uint8_t data);
     bool isThereNewData();
 
-
-//    void getOOB();
-//    void clearLTK()
-
-
     //TESTING
     void onReceivedData(const uint8_t* data, size_t length);
     std::vector<uint8_t> _fileStorage;
