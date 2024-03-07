@@ -4,12 +4,6 @@
  *
  *  Essentially a data-struct for an image. Holds all data required to draw the picture pixel by pixel.
  *
- *  TODO more explanation would be nice :)
- *  TODO Change name after testing if completed
- *  TODO change vector to array
- *
- *
- *  @author Matt (Martin) Hnizdo
  *  @date 17/11/2023
  *  @bug No known bugs.
  */
@@ -34,7 +28,7 @@ public:
      *
      * @param width     Width of the image (in pixels)
      * @param height    Height of the image (in pixels)
-     * @param data      Bytearray of the picture - TODO vector
+     * @param data      Bytearray of the picture
      */
     MyImage(uint32_t width, uint32_t height, const std::vector<uint8_t>& data)
             : _width(width)
