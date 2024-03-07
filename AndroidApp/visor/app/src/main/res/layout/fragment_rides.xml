@@ -36,7 +36,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/free_ride"
+                android:src="@drawable/icon_big_ride_free"
                 android:contentDescription="@string/ride_free_ride" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:layout_marginTop="20dp"
-                android:src="@drawable/free_ride"
+                android:src="@drawable/icon_big_ride_nav"
                 android:contentDescription="@string/ride_navigate_to" />
 
             <TextView
