@@ -25,28 +25,18 @@ public class VisorApplication extends Application {
 
 
     public void loadDevices(Activity activity) {
-
-        //hud
-
-        // TODO hardcoded
-        String macAddress = "30:83:98:EF:3D:7E";
+        // TODO probably shouldn't be hardcoded :)
+        String macAddress = "30:83:98:FB:D6:7A";
         String sUUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
         String cUUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
 
-
         deviceManager.setHUD(new HudUnit(activity, macAddress, sUUID, cUUID));
-
-        //gps
-//        deviceManager.addSensor(new MySensorGPS());
-//        deviceManager.addSensor(new MySensor("FAKE GPS", null, MySensor.TYPE_GPS));
-
         deviceManager.setGPS(new MySensorGPS());
 
         //devices
         deviceManager.addSensor(new MySensor("Heart rate", null, MySensor.TYPE_HR));
         deviceManager.addSensor(new MySensor("Cadence", "", MySensor.TYPE_CAD));
         deviceManager.addSensor(new MySensor("Power1234", "", MySensor.TYPE_PWR));
-
     }
 
 
