@@ -220,7 +220,7 @@ uint8_t Bluetooth::calculateChecksum(const uint8_t* data, size_t length) {
 
 
 void Bluetooth::sendAcknowledgment(bool isSuccessful) {
-    delay(50); //just to be sure
+    delay(25); //just to be sure
     sendData(isSuccessful ? 0x01 : 0x00);
 }
 
