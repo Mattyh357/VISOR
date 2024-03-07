@@ -21,64 +21,26 @@ void Visor::setup() {
     Serial.begin(SERIAL_BOUD);
     Serial.println("App started");
 
-
+    // Bluetooth
     _bt = Bluetooth(BT_NAME, BT_SERVICE_UUID, BT_CHARACTERISTIC_UUID);
     _bt.begin(&_bt);
 
+    // Display
     _display = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, PIN_CS, PIN_DC, PIN_MOSI, PIN_SCK, PIN_RST);
     _display.begin();
     _display.fillScreen(BLACK);
 
-    //
-    _display.print(10, 10, "DC", &Font24, BLACK, WHITE);
+    // Start with disconnected image
+    _display.drawImageTest(MyImage(ImgDisconnected.Width, ImgDisconnected.Height, ImgDisconnected.toVector()));
 
     myMode = disconnected;
 
+
+
+    // TEST CODE
+
 }
 
-
-//
-
-//  QR code :)
-//
-//    delay(1000);
-//
-//    _display.fillScreen(BLACK);
-//
-//
-//    uint8_t myQRCode[841]; // Make sure this array has enough space
-//    const char* myText = "HelloQRCode12345";
-//
-//    if (QRGen::encodeText(myText, myQRCode)) {
-//
-//        int16_t startX = 0;  // Starting X position of the QR code on the display
-//        int16_t startY = 0;  // Starting Y position of the QR code on the display
-//
-//        uint8_t qrcodeSize = 21;  // Assuming QR version 1 (21x21)
-//
-//        int scaleFactor = 2;  // or 3 for 3x3 blocks
-//
-//
-//        Serial.print("QR: ");
-//
-//        for (uint8_t y = 0; y < qrcodeSize; y++) {
-//            for (uint8_t x = 0; x < qrcodeSize; x++) {
-//                bool moduleSet = myQRCode[y * qrcodeSize + x];
-//                _display.testForQR(startX + x, startY + y, moduleSet ? BLACK : WHITE);
-//
-//                Serial.print(moduleSet ? "1" : "0");
-//            }
-//        }
-//
-//        Serial.println("END");
-//
-//
-//
-//    } else {
-//        Serial.println("Failed to generate QR code.");
-//    }
-//
-//}
 
 bool _bootingCompleted = false;
 
@@ -90,17 +52,14 @@ void Visor::update() {
 
     _updateTimer = millis() + UPDATE_INTERVAL;
 
-//    return; // TODO REMOVE :D
-
-//    Serial.println("Running Update");
-//    Serial.println(_bt.isConnected() ? "BT connected" : "BT Not connected");
+//    return; // TODO remove :)
 
     // lost connection handling
-    if(myMode != disconnected && _bt.isConnected() == false) {
+    if(myMode != disconnected && myMode != lostSignal && _bt.isConnected() == false) {
         // TODO should not print every loop.. just once
         // when I lose connection
         _display.fillScreen(BLACK);
-        _display.print(10, 10, "lost", &Font24, BLACK, WHITE);
+        _display.drawImageTest(MyImage(ImgDisconnected.Width, ImgDisconnected.Height, ImgDisconnected.toVector()));
         myMode = lostSignal;
         _updateTimer = 0;
         return;
@@ -114,33 +73,31 @@ void Visor::update() {
             delay(1000);
             myMode = booting;
             _display.fillScreen(BLACK);
-            _display.print(10, 10, "boot", &Font24, BLACK, WHITE);
+            _display.drawImageTest(MyImage(ImgDisconnected.Width, ImgDisconnected.Height, ImgDisconnected.toVector()));
             _bt.sendData(REQUEST_BOOT_DATA);
         }
         return;
     }
     else if (myMode == booting) {
+        // Print % of booting
+        _display.print(10, 5, "BOOT", &Font24, BLACK, WHITE);
 
-        // TODO this should only run when actually booting :)
-        // TODO percentage
         std::string status = std::to_string((_bt._totalChunks - _bt._remainingChunks)) + "/" + std::to_string(_bt._totalChunks);
         _display.print(10, 30, status.c_str(), &Font24, BLACK, WHITE);
 
+        // Booting completed
         if(_bt.last_instruction == ALL_BOOT_DATA_SENT) {
-            // TODO process boot data
             Serial.println("PROCESSING BOOT DATA");
-
             _imgProcessor = ImageProcessor(_bt._fileStorage);
 
-            delay(1000);
+            delay(200);
             // TODO clear _fileStorage
             Serial.println("FINISHED processing");
-
 
             _bootingCompleted = true;
             myMode = working;
             _display.fillScreen(BLACK);
-            _display.print(10, 10, "work", &Font24, BLACK, WHITE);
+            _display.drawImageTest(MyImage(ImgStandBy.Width, ImgStandBy.Height, ImgStandBy.toVector()));
             _bt.sendData(BOOT_DATA_PROCESSED);
         }
 
@@ -151,13 +108,12 @@ void Visor::update() {
             if(_bootingCompleted) {
                 myMode = working;
                 _display.fillScreen(BLACK);
-                _display.print(10, 10, "w1", &Font24, BLACK, WHITE);
+                _display.drawImageTest(MyImage(ImgStandBy.Width, ImgStandBy.Height, ImgStandBy.toVector()));
             }
             else{
                 myMode = booting;
-
                 _display.fillScreen(BLACK);
-                _display.print(10, 10, "b1", &Font24, BLACK, WHITE);
+                _display.print(10, 10, "b1", &Font24, BLACK, WHITE); // TODO replace with img
                 _bt.sendData(REQUEST_BOOT_DATA);
             }
 
@@ -175,11 +131,14 @@ void Visor::update() {
 
         if(_bt.last_instruction == SPEED_INSTRUCTION) {
             std::string number = std::to_string(_bt.getData());
-            std::string text = "S:" + number;
-            Serial.println(text.c_str());
+            Serial.println(number.c_str());
 
-            _display.fillScreen(BLACK);
-            _display.print(10, 10, text.c_str(), &Font24, BLACK, WHITE);
+            if(_prevPrintType != _bt.last_instruction){
+                _display.fillScreen(BLACK);
+                _prevPrintType = _bt.last_instruction;
+            }
+
+            _display.print(30, 15, number.c_str(), &Font24, BLACK, WHITE);
             return;
         }
         else if (_bt.last_instruction == NAVIGATION_IMG_INSTRUCTION) {
@@ -194,11 +153,14 @@ void Visor::update() {
             std::string text = "I:" + std::to_string(number);
             Serial.println(text.c_str());
 
-            _display.fillScreen(BLACK);
+            if(_prevPrintType != _bt.last_instruction){
+                _display.fillScreen(BLACK);
+                _prevPrintType = _bt.last_instruction;
+            }
+
             _display.drawImageTest(_imgProcessor.getImage(number));
 
 
-//            _display.print(10, 10, text.c_str(), &Font24, BLACK, WHITE);
             return;
         }
         else {
@@ -209,21 +171,6 @@ void Visor::update() {
         }
 
     }
-
-//    _display.print(10, 10, String(i++).c_str(), &Font24, BLACK, WHITE);
-//    _display.print(10, 30, String(i++).c_str(), &Font24, BLACK, WHITE);
-
-
-//    _display.fillRect(22, 6, 52, 52, RED);
-//    delay(2000);
-//
-//
-//    _display.fillRect(22, 6, 52, 52, WHITE);
-//    delay(2000);
-//
-//    _display.fillScreen(BLACK);
-//    delay(2000);
-
 }
 
 
