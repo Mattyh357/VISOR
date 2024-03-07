@@ -2,9 +2,7 @@
  * This class is part of the V.I.S.O.R app.
  * The Recorder class is responsible for running a separate thread which check the GPS location in
  * set interval and record a data (gps data + additional sensors).
- *
  * Utilizing pauseLock, this thread can be paused and resumed.
- *
  * Lastly, it can call the JourneyLoaderAndSaver to save the recorded route.
  *
  * @version 1.0
@@ -58,7 +56,6 @@ public class Recorder {
                     }
                 }
                 try {
-                    // TODO better sleep thingy
                     recordData();
                     Thread.sleep(1000);
                     elapsedSeconds++;
@@ -85,20 +82,17 @@ public class Recorder {
         Location location = _app.deviceManager.getGPS().getLocation();
 
         /// If it's different then save it
-
         // No reason to save -> exit
         if(location == null || location.getTime() == _journey.getLastWaypoint().getTime())
             return;
 
-        // TODO better check for 0 0 position
+        // Filter 0x0 location
         if(location.getLatitude() == 0 && location.getLongitude() == 0)
             return;
 
         // Save location
         Waypoint waypoint = new Waypoint(location);
 
-        // TODO Additional data to be saved
-        // TODO Additional data to be saved
         // TODO Additional data to be saved
 
         _journey.addWaypoint(waypoint);
@@ -174,9 +168,6 @@ public class Recorder {
                 if(_recorderListener != null)
                     _recorderListener.onSavingComplete();
             }
-        }); // TODO add listener or something
+        });
     }
-
-
-
 }
