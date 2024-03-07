@@ -51,7 +51,7 @@ public class HudUnit implements HudBluetoothListener{
      * @param listener The listener to set for status updates.
      */
     public void setStatusChangeListener(SensorStatusListener listener) {
-        this._sensorStatusListener = listener;
+        _sensorStatusListener = listener;
     }
 
     /**
