@@ -7,49 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.home.HudDetailFragment">
 
-    <!--    Status   -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/hud_card_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="4dp"
-        app:cardCornerRadius="8dp"
-        android:layout_margin="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginVertical="5dp"
-            android:gravity="center"
-            >
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="20sp"
-                android:gravity="start"
-                android:layout_marginStart="30dp"
-                android:text="Status: "
-                />
-            <TextView
-                android:id="@+id/txt_status"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="20sp"
-                android:gravity="start"
-                android:text="UNKNOWN"
-                />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
 
     <!--    Speed   -->
     <androidx.cardview.widget.CardView
@@ -59,9 +16,9 @@
         app:cardElevation="4dp"
         app:cardCornerRadius="8dp"
         android:layout_margin="5dp"
-        app:layout_constraintTop_toBottomOf="@+id/hud_card_status"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         >
 
         <LinearLayout
@@ -89,7 +46,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:min="0"
-                    android:max="100"
+                    android:max="99"
                     android:progress="50"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
