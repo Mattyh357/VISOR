@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Send speed"
+                android:text="Speed"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:layout_marginVertical="5dp"
@@ -70,22 +70,52 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Distance"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:layout_marginVertical="5dp"
+                />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <SeekBar
+                    android:id="@+id/sb_Distance"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:min="0"
+                    android:max="99"
+                    android:progress="50"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/txt_distance"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+
+                <TextView
+                    android:id="@+id/txt_distance"
+                    android:layout_width="80dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:textSize="20sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    android:gravity="center"
+
+                    android:text="123"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
 
-
-        <Button
-            android:id="@+id/btn_send_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_gravity="center"
-            android:gravity="start"
-            android:theme="@style/Button.Positive"
-            android:layout_marginTop="15dp"
-            android:text="Send speed"
-            />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
