@@ -1,4 +1,7 @@
-const uint8_t 18_destination_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_18_destination_map[] PROGMEM =
 {
     //Image: 18_destination
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 18_destination_map[] PROGMEM =
 };
 
 
-sImage 18_destination = {
-    18_destination_map,
+sImage Icon_18_destination = {
+    Icon_18_destination_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

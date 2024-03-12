@@ -1,4 +1,7 @@
-const uint8_t 02_ferry-train_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_02_ferry-train_map[] PROGMEM =
 {
     //Image: 02_ferry-train
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 02_ferry-train_map[] PROGMEM =
 };
 
 
-sImage 02_ferry-train = {
-    02_ferry-train_map,
+sImage Icon_02_ferry-train = {
+    Icon_02_ferry-train_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

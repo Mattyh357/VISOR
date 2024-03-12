@@ -1,4 +1,7 @@
-const uint8_t 17_roundabout-right_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_17_roundabout-right_map[] PROGMEM =
 {
     //Image: 17_roundabout-right
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 17_roundabout-right_map[] PROGMEM =
 };
 
 
-sImage 17_roundabout-right = {
-    17_roundabout-right_map,
+sImage Icon_17_roundabout-right = {
+    Icon_17_roundabout-right_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

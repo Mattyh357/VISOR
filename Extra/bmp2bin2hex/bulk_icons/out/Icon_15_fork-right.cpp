@@ -1,4 +1,7 @@
-const uint8_t 15_fork-right_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_15_fork-right_map[] PROGMEM =
 {
     //Image: 15_fork-right
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 15_fork-right_map[] PROGMEM =
 };
 
 
-sImage 15_fork-right = {
-    15_fork-right_map,
+sImage Icon_15_fork-right = {
+    Icon_15_fork-right_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

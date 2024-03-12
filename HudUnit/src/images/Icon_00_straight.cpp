@@ -1,4 +1,7 @@
-const uint8_t 00_straight_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_00_straight_map[] PROGMEM =
 {
     //Image: 00_straight
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 00_straight_map[] PROGMEM =
 };
 
 
-sImage 00_straight = {
-    00_straight_map,
+sImage Icon_00_straight = {
+    Icon_00_straight_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

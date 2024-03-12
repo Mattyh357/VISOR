@@ -1,6 +1,9 @@
-const uint8_t 14_ramp-right_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_14_ramp_right_map[] PROGMEM =
 {
-    //Image: 14_ramp-right
+    //Image: 14_ramp_right
     //Size: 32x32
 
     0x00, 0x00, 0x00, 0x00,
@@ -38,8 +41,8 @@ const uint8_t 14_ramp-right_map[] PROGMEM =
 };
 
 
-sImage 14_ramp-right = {
-    14_ramp-right_map,
+sImage Icon_14_ramp_right = {
+    Icon_14_ramp_right_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

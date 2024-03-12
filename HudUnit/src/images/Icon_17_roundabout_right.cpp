@@ -1,6 +1,9 @@
-const uint8_t 17_roundabout-right - Copy_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_17_roundabout_right_map[] PROGMEM =
 {
-    //Image: 17_roundabout-right - Copy
+    //Image: 17_roundabout_right
     //Size: 32x32
 
     0x00, 0x00, 0x00, 0x00,
@@ -38,8 +41,8 @@ const uint8_t 17_roundabout-right - Copy_map[] PROGMEM =
 };
 
 
-sImage 17_roundabout-right - Copy = {
-    17_roundabout-right - Copy_map,
+sImage Icon_17_roundabout_right = {
+    Icon_17_roundabout_right_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

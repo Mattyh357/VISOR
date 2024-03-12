@@ -1,4 +1,7 @@
-const uint8_t 04_turn-slight-left_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_04_turn_slight_left_map[] PROGMEM =
 {
     //Image: 04_turn-slight-left
     //Size: 32x32
@@ -38,8 +41,8 @@ const uint8_t 04_turn-slight-left_map[] PROGMEM =
 };
 
 
-sImage 04_turn-slight-left = {
-    04_turn-slight-left_map,
+sImage Icon_04_turn_slight_left = {
+    Icon_04_turn_slight_left_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};

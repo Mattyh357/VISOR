@@ -1,6 +1,9 @@
-const uint8_t 16_uturn-right_map[] PROGMEM =
+
+#include "../Images.h"
+
+const uint8_t Icon_16_uturn_right_map[] PROGMEM =
 {
-    //Image: 16_uturn-right
+    //Image: 16_uturn_right
     //Size: 32x32
 
     0x00, 0x00, 0x00, 0x00,
@@ -38,8 +41,8 @@ const uint8_t 16_uturn-right_map[] PROGMEM =
 };
 
 
-sImage 16_uturn-right = {
-    16_uturn-right_map,
+sImage Icon_16_uturn_right = {
+    Icon_16_uturn_right_map,
     32 /* Width */,
     32 /*Height */ 
-}};
+};
