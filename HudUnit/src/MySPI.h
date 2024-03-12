@@ -10,8 +10,7 @@
  *  TODO LINKs:
  *  TODO Change to hardware SPI as that would be much faster
  *
- *  @author Matt (Martin) Hnizdo
- *  @date 27/10/2023
+  *  @date 27/10/2023
  *  @bug No known bugs.
  */
 
