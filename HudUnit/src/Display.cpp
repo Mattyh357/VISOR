@@ -4,7 +4,6 @@
  *
  *  Part of Display library for project VISOR.
  *
- *  @author Matt (Martin) Hnizdo
  *  @date 27/10/2023
  *  @bug No known bugs.
  */
@@ -13,8 +12,6 @@
 
 Display::Display(int16_t w, int16_t h, int8_t cs, int8_t dc, int8_t mosi, int8_t sck, int8_t rst)
         : MySPI(cs, dc, mosi, sck, rst)
-        , WIDTH(w)
-        , HEIGHT(h)
         , _width(w)
         , _height(h)
 {}
@@ -171,9 +168,14 @@ void Display::writeColor(uint16_t color, uint32_t len) {
     }
 }
 
-//TODO TEST START
 
 void Display::drawImage(sImage *Image) {
+
+    int scaleFactor = 1;
+    int offsetX = (_width - (Image->Width * scaleFactor)) / 2;
+    int offsetY = (_height - (Image->Height * scaleFactor)) / 2;
+
+    offsetY -= 15; // I know!
 
     for (uint16_t y = 0; y < Image->Height; y++) {
         for (uint16_t x = 0; x < Image->Width; x++) {
@@ -187,82 +189,50 @@ void Display::drawImage(sImage *Image) {
             bool isPixelSet = pixelValue & mask;
 
             if (isPixelSet) {
-                drawPixel(x, y, BLACK); // If the bit is set, draw a black pixel
+                drawPixel(offsetX + x, offsetY + y, WHITE); // If the bit is set, draw a black pixel
             } else {
-                drawPixel(x, y, WHITE); // If the bit is not set, draw a white pixel
+                drawPixel(offsetX + x, offsetY + y, BLACK); // If the bit is not set, draw a white pixel
             }
         }
     }
 
 }
-
-
-
-
-void Display::drawImageTest(MyImage image) {
-
-    int scaleFactor = 1;
-    int offsetX = (_width - (image.getWidth() * scaleFactor)) / 2;
-    int offsetY = (_height - (image.getHeight() * scaleFactor)) / 2;
-
-    for (uint16_t y = 0; y < scaleFactor * image.getHeight(); y++) {
-        for (uint16_t x = 0; x < scaleFactor * image.getWidth(); x++) {
-            uint16_t origX = x / scaleFactor;
-            uint16_t origY = y / scaleFactor;
-            uint16_t position = origY * image.getWidth() + origX;
-
-            const std::vector<uint8_t>& imageData = image.getData();
-            uint8_t pixelValue = imageData[position / 8];
-
-            uint8_t mask = 1 << (7 - (position % 8));
-            bool isPixelSet = pixelValue & mask;
-
-            if (isPixelSet) {
-                drawPixel(offsetX + x, offsetY + y, WHITE); // Draw a black pixel
-            } else {
-                drawPixel(offsetX + x, offsetY + y, BLACK); // Draw a white pixel
-            }
-        }
-    }
-
-
-}
-
-
-
-
-
-//TODO TEST END
 
 
 void Display::setTextColor(uint16_t color) {
-    //TODO not null
     _textColor = color;
 }
 
 void Display::setTextFont(sFont *font) {
-    // TODO NotNULL
     _textFont = font;
 }
 
 void Display::setTextBackgroundColor(uint16_t color) {
-    // TODO NotNULL
     _textBgColor = color;
 }
 
-void Display::print(uint16_t x, uint16_t y, const char *pString) {
+void Display::print(int x, int y, const char *pString) {
+
+    // Center on X if -1
+    if(x == -1){
+        uint16_t stringWidth = strlen(pString) * _textFont->Width;
+        x = (_width - stringWidth) / 2;
+        if(x > _width) x = 0;
+    }
+
+    // Center on Y if -1
+    if(y == -1){
+        uint16_t stringHeight = strlen(pString) * _textFont->Height;
+        y = (_height - stringHeight) / 2;
+        if(y > _height) y = 0;
+    }
+
     print(x, y, pString, _textFont, _textBgColor, _textColor);
 }
 
 void Display::print(uint16_t x, uint16_t y, const char *pString, sFont *font, uint16_t bg_color, uint16_t text_color) {
     uint16_t Xpoint = x;
     uint16_t Ypoint = y;
-
-    //TODO FIX check :)
-//    if (Xstart > Paint.Width || Ystart > Paint.Height) {
-//        //Debug("Paint_DrawString_EN Input exceeds the normal display range\r\n");
-//        return;
-//    }
 
     while (* pString != '\0') {
         //if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
@@ -320,30 +290,12 @@ void Display::drawChar(uint16_t x, uint16_t y, const char c, sFont *Font, uint16
 }
 
 void Display::drawPixel(int16_t x, int16_t y, uint16_t color) {
-    // Flip horizontally
-    x = _width - 1 - x;
+
+    x = _width - x - 1;
 
     if ((x >= 0) && (x < _width) && (y >= 0) && (y < _height)) {
         setAddrWindow(x, y, 1, 1);
         spiWrite16(color);
-    }
-}
-
-
-void Display::testForQR(int16_t x, int16_t y, uint16_t color) {
-
-    int scaleFactor = 3;
-
-    for (int16_t i = 0; i < scaleFactor; i++) {
-        for (int16_t j = 0; j < scaleFactor; j++) {
-            int16_t scaledX = x * scaleFactor + i;
-            int16_t scaledY = y * scaleFactor + j;
-
-            if ((scaledX >= 0) && (scaledX < _width) && (scaledY >= 0) && (scaledY < _height)) {
-                setAddrWindow(scaledX, scaledY, 1, 1);
-                spiWrite16(color);
-            }
-        }
     }
 }
 
