@@ -3,14 +3,13 @@
  *  @brief Header file for class: Display
  *
  *  Part of Display library for project VISOR.
+ *  This class encapsulates functionalities for OLED display using SSD1331 chip. Inheriting from a custom SPI class
+ *  for sending commands directly to the display. Provides methods for initialization of the display, drawing
+ *  individual pixes, images, and text.
  *
- *  TODO more explanation would be nice :)
+ *  Very loosely based on Adafruit's GPX library:
+ *  https://github.com/adafruit/Adafruit-GFX-Library
  *
- *  Very loosely based on Adafruit's GPX library, and <INCLUDE SOURCE FOR THE OTHER LIBRARY>.
- *  TODO LINKs:
- *
- *
- *  @author Matt (Martin) Hnizdo
  *  @date 27/10/2023
  *  @bug No known bugs.
  */
@@ -21,27 +20,27 @@
 #include "MySPI.h"
 #include "SSD1331_CMD.h"
 #include "Fonts.h"
-
-//TODO test
-#include "MyImage.h"
+#include <cstring>
 #include "Images.h"
 
-
+/** @brief Black color in RGB565 format. */
 #define BLACK           0x0000
+
+/** @brief White color in RGB565 format. */
 #define WHITE           0xFFFF
+
+/** @brief Blue color in RGB565 format. */
 #define BLUE            0x001F
+
+/** @brief Red color in RGB565 format. */
 #define RED             0xF800
+
+/** @brief Green color in RGB565 format. */
 #define GREEN           0x07E0
-#define CYAN            0x07FF
-#define MAGENTA         0xF81F
-#define YELLOW          0xFFE0
 
 
-class Display : public MySPI{
+class Display : public MySPI {
 public:
-
-    //TODO test
-    void testForQR(int16_t x, int16_t y, uint16_t color);
 
     /********************************************************
      *                       Constructors                   *
@@ -128,11 +127,18 @@ public:
      */
     void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 
-    //TODO probably gonna go away anyway
+    /**
+     * @brief Draws an image on the display with center alignment.
+     *
+     * Takes an image structure as input and draws it on the display. The image is scaled by a factor of 1 (no scaling)
+     * and centered on the display based on the display's width and height. The method adjusts for a fixed Y-offset to
+     * account for specific layout needs. It iterates through each pixel of the image, checking the corresponding bit in
+     * the image's bitmap table and draws a pixel on the display as either black or white based on the bit's value.
+     *
+     * @param Image Pointer to the sImage structure containing image data, including width, height, and the bitmap table.
+     */
     void drawImage(sImage *Image);
 
-    // TODO this is probably gonna stay
-    void drawImageTest(MyImage image);
 
     // Text
 
@@ -140,8 +146,6 @@ public:
      * @brief Sets the color used for text rendering.
      *
      * Sets the text color property which is used in subsequent text rendering operations.
-     *
-     * @note Ensure the color parameter is not null before using this method. // TODO need to check this
      *
      * @param color 16-bit color value for the text.
      */
@@ -151,8 +155,6 @@ public:
      * @brief Sets the font used for text rendering.
      *
      * Sets the text font property which is used in subsequent text rendering operations.
-     *
-     * @note Ensure the font parameter is not null before using this method. // TODO need to check this
      *
      * @param font Pointer to the font structure to be used for text rendering.
      */
@@ -164,8 +166,6 @@ public:
     *
     * Sets the text background color property which is used in subsequent text rendering operations.
     *
-    * @note Ensure the color parameter is not null before using this method. // TODO need to check this
-    *
     * @param color 16-bit background color value for the text.
     */
     void setTextBackgroundColor(uint16_t color);
@@ -173,14 +173,16 @@ public:
     /**
      * @brief Prints a string on the display at a specified position using the current font and colors.
      *
+     * If X or Y coordinates are -1, text will be centered on that axis.
+     *
      * This overload uses the currently set text font, text color, and background color to print the string.
      * If those haven't been set - some default ones I picked at random will be used :)
      *
-     * @param x Starting x-coordinate of the string.
-     * @param y Starting y-coordinate of the string.
+     * @param x Starting x-coordinate of the string or -1 to center.
+     * @param y Starting y-coordinate of the string or -1 to center.
      * @param pString Pointer to the string to be printed.
      */
-    void print(uint16_t x, uint16_t y, const char *pString);
+    void print(int x, int y, const char *pString);
 
     /**
      * @brief Prints a string on the display at a specified position with a specified font and colors.
@@ -245,16 +247,6 @@ protected:
 private:
 
     /**
-     * @brief The raw display width which remains constant.
-     */
-    int16_t WIDTH{};
-
-    /**
-     * @brief The raw display height which remains constant.
-     */
-    int16_t HEIGHT{};
-
-    /**
      * @brief Display width adjusted by the current rotation setting.
      */
     int16_t _width{};
@@ -264,25 +256,11 @@ private:
      */
     int16_t _height{};
 
-    /**
-     * @brief Current display rotation ranging from 0 to 3. // TODO figure what will be what
-     */
-    uint8_t _rotation{0};
-
-    /**
-     * @brief Horizontal position (x-coordinate) where text printing starts.
-     */
-    int16_t _cursor_x{};
-
-    /**
-     * @brief Vertical position (y-coordinate) where text printing starts.
-     */
-    int16_t _cursor_y{};
 
     /**
      * @brief Current font for printing text.
      */
-    sFont* _textFont{}; // TODO default font - probably gonna handle fonts differently anyway
+    sFont* _textFont{};
 
     /**
      * @brief Current color used for text printing.
@@ -293,7 +271,6 @@ private:
      * @brief Current background color for text printing.
      */
     uint16_t _textBgColor{WHITE};
-
 
 };
 
