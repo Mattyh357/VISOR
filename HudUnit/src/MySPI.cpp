@@ -4,7 +4,6 @@
  *
  *  Part of Display library for project VISOR.
  *
- *  @author Matt (Martin) Hnizdo
  *  @date 27/10/2023
  *  @bug No known bugs.
  */
