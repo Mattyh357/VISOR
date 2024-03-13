@@ -53,6 +53,10 @@ public:
 
         // Checksum
         if(Utils::checkChecksum(data, length, CHECKSUM_SIZE)){
+
+            // Remove the last byte (checksum) from the value
+            value.resize(value.length() - 1);
+
             std::vector<std::string> values = Utils::splitString(value);
             bluetoothInstance->onReceivedData(values);
             bluetoothInstance->sendAcknowledgment(true);
