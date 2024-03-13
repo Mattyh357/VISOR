@@ -2,18 +2,20 @@
  *  @file MySPI.h
  *  @brief Header file for class: MySPI
  *
- *  Part of Display library for project VISOR.
+ * Part of Display library for project VISOR.
+ * This class encapsulates the SPI communication protocol, tailored for handling
+ * display-specific commands and data transmission to SPI devices. It abstracts
+ * the lower-level details of SPI communication into easy-to-use methods for sending
+ * commands and data to a display module. The class is designed to work with a wide
+ * range of SPI-compatible display modules by allowing customization of the SPI pins
+ * and offering both 8-bit and 16-bit transmission capabilities.
  *
- *  TODO more explanation would be nice :)
+ *  Very loosely based on Adafruit's GPX library:
+ *  https://github.com/adafruit/Adafruit-GFX-Library
  *
- *  Very loosely based on Adafruit's GPX library, and <INCLUDE SOURCE FOR THE OTHER LIBRARY>.
- *  TODO LINKs:
- *  TODO Change to hardware SPI as that would be much faster
- *
-  *  @date 27/10/2023
+ *  @date 27/10/2023
  *  @bug No known bugs.
  */
-
 
 #pragma once
 
