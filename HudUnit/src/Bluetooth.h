@@ -21,10 +21,11 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+#include <Arduino.h>
 #include <sstream>
 #include <vector>
 #include <string>
-#include <Arduino.h>
+#include "Utils.h"
 
 /** @brief Byte for error acknowledgment. */
 #define ACK_ERROR 0x00
@@ -39,7 +40,7 @@
 #define INSTRUCTION_NAVIG_TEST 6
 
 /** @brief TODO not sure yet. */
-#define CHECKSUM_SIZE 1 
+#define CHECKSUM_SIZE 1
 
 
 class Bluetooth {
@@ -93,6 +94,16 @@ public:
     void onReceivedData(std::vector<std::string>);
 
     /**
+     * @brief Sends an acknowledgment to connected clients.
+     *
+     * Sends a predefined acknowledgment byte to all connected clients, indicating whether a previously
+     * received command was successfully processed.
+     *
+     * @param isSuccessful A boolean indicating the success of the previous operation.
+     */
+    void sendAcknowledgment(bool isSuccessful);
+
+    /**
      * @brief Checks if there is new data available that was received from a client.
      *
      * Returns true if new data has been received from a client, otherwise returns false. This is controlled
@@ -124,17 +135,6 @@ private:
      * @param data The single byte of data to send to connected clients.
      */
     void sendData(uint8_t data);
-
-    /**
-     * @brief Sends an acknowledgment to connected clients.
-     *
-     * Sends a predefined acknowledgment byte to all connected clients, indicating whether a previously
-     * received command was successfully processed.
-     *
-     * @param isSuccessful A boolean indicating the success of the previous operation.
-     */
-    void sendAcknowledgment(bool isSuccessful);
-
 
 
     /** @brief The BLE server instance for managing BLE connections and services. */
