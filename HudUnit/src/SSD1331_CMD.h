@@ -1,9 +1,14 @@
-//
-// Created by matt on 27/10/23.
-//
-
-
-// TODO source: Bro, Thrust me! :)
+/**
+ * @file HUDUnit_SSD1331_CMD.h
+ * @brief Definition of SSD1331 OLED display commands.
+ *
+ * This header file contains the command definitions for controlling an SSD1331 OLED display.
+ * These commands are used to draw graphics, set display properties, and control the power
+ * state of the display. It serves as a reference for implementing display functionality
+ * in a concise and readable manner.
+ *
+ * @source https://github.com/adafruit/Adafruit-GFX-Library
+ */
 
 #ifndef HUDUNIT_SSD1331_CMD_H
 #define HUDUNIT_SSD1331_CMD_H
