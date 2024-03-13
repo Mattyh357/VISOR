@@ -1,6 +1,14 @@
-//
-// Created by matty on 12-Mar-24.
-//
+/**
+ *  @file MyCli.cpp
+ *  @brief Provides access to navigation icons.
+ *
+ * This class serves as a utility to retrieve images/icons used for navigation purposes. It maps
+ * numeric indices to specific icon images. The class is designed to be used statically, offering
+ * a simple interface to access predefined navigation icons.
+ *
+ *  @date 01/03/2024
+ *  @bug No known bugs.
+ */
 
 #pragma once
 
@@ -8,6 +16,17 @@
 
 class NavIcon {
 public:
+
+    /**
+     * @brief Retrieves a navigation icon image based on the provided index.
+     *
+     * Given an index, this method returns a pointer to the corresponding navigation icon image.
+     * The icons represent various navigation directions or actions, such as straight, merge, ferry,
+     * turns of varying degrees, ramps, forks, U-turns, roundabouts, and destinations.
+     *
+     * @param index The index of the icon to retrieve. Each index corresponds to a specific navigation action.
+     * @return A pointer to the Image structure representing the navigation icon. Returns nullptr if the index is out of range.
+     */
     static Image* getImage(uint8_t index) {
         switch (index) {
             case 0:
