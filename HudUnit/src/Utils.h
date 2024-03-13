@@ -42,7 +42,7 @@ public:
             calculatedChecksum += data[i];
         }
 
-        return calculatedChecksum =! checksum;
+        return calculatedChecksum == checksum;
     }
 
     /**
