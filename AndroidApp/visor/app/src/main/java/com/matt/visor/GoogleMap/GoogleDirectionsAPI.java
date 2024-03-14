@@ -32,8 +32,6 @@ public class GoogleDirectionsAPI {
 
     private static final String API_URL = "https://maps.googleapis.com/maps/api/directions/json?";
     private final String _APIkey;
-    private String _travelMode; // TODO travelmode
-
 
     /**
      * Initializes the GoogleDirectionsAPI with the provided API key.
