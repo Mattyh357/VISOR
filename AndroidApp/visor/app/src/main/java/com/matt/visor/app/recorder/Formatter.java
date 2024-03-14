@@ -45,7 +45,8 @@ public class Formatter {
      *
      * @param totalSeconds The total seconds to format.
      * @return The elapsed time as a formatted string.
-     */    public static String secondsAsElapsedTime(int totalSeconds) {
+     */
+    public static String secondsAsElapsedTime(int totalSeconds) {
         int hours = totalSeconds / 3600;
         int minutes = (totalSeconds % 3600) / 60;
         int seconds = totalSeconds % 60;
