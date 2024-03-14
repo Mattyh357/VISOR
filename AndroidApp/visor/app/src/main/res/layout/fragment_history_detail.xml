@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/history_detail_btn_export"
+        app:layout_constraintBottom_toTopOf="@+id/history_detail_card_export"
         android:layout_marginBottom="10dp"
         >
 
@@ -28,8 +28,6 @@
             android:background="@color/active"
             android:contentDescription="@string/ride_map" />
 
-        <!--  TODO remove image background color  -->
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_detail_table_kvp"
             android:layout_width="match_parent"
@@ -40,6 +38,7 @@
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/history_detail_card_export"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardElevation="4dp"
@@ -54,7 +53,7 @@
             android:id="@+id/history_detail_btn_export"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Export GPX"
+            android:text="@string/export_gpx"
             android:theme="@style/Button.Positive"
             android:layout_gravity="center"
             />
