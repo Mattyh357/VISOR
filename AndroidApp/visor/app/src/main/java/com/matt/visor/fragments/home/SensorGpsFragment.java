@@ -79,13 +79,17 @@ public class SensorGpsFragment extends Fragment {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.sensor_gps_map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(googleMap -> {
-                LatLng location = new LatLng(-34, 151);  // Initial coordinates
-                _mapMarker = googleMap.addMarker(new MarkerOptions().position(location).title("position"));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, DEFAULT_ZOOM));
+                _mapMarker = googleMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("position"));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(0, 0), DEFAULT_ZOOM));
                 _map = googleMap;
+
+                // Initial stuff
+                Location location = app.deviceManager.getGPS().getLocation();
+                if(location != null) {
+                    onMapChange();
+                }
             });
         }
-
 
         // Details init
         List<TableKvpItem<?>> data = new ArrayList<>();
@@ -94,6 +98,7 @@ public class SensorGpsFragment extends Fragment {
         data.add(new TableKvpItem<>("altitude", "Altitude", ""));
         data.add(new TableKvpItem<>("speed", "Speed", ""));
         data.add(new TableKvpItem<>("timeInSeconds", "Last update", ""));
+
 
 
         // RecyclerView
