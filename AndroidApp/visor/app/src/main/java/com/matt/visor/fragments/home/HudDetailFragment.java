@@ -130,8 +130,7 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
      */
     private void sendDataSpeedAndDistance() {
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-        app.deviceManager.getHUD().sendSpeed(_speed, _distance);
-        // TODO distance
+        app.deviceManager.getHUD().sendSpeedAndDistance(_speed, _distance);
     }
 
     /**
