@@ -88,8 +88,10 @@ public class HudUnit implements HudBluetoothListener{
      *
      * @param speed The speed value to send.
      */
-    public void sendSpeed(int speed) {
-        _bt.sendData(InstructionsByte.SPEED_INSTRUCTION, speed);
+    public void sendSpeedAndDistance(double speed, double distance) {
+        String data = speed + "," + distance;
+        _bt.sendDataTest(InstructionsByte.SPEED_INSTRUCTION, data);
+
     }
 
     /**
@@ -97,8 +99,9 @@ public class HudUnit implements HudBluetoothListener{
      *
      * @param image The image identifier to send.
      */
-    public void sendImg(int image) {
-        _bt.sendData(InstructionsByte.NAVIGATION_IMG_INSTRUCTION, image);
+    public void sendNav(int image, int distance) {
+        String data = image + "," + distance;
+        _bt.sendDataTest(InstructionsByte.NAVIGATION_INSTRUCTION, data);
     }
 
     /**
@@ -133,17 +136,6 @@ public class HudUnit implements HudBluetoothListener{
     }
 
     @Override
-    public void onAllDataSent() {   }
-
-    @Override
-    public void onRequestBootData() {
-        setStatus(Status.Boot);
-    }
-
-    @Override
-    public void onBootComplete() {
-        setStatus(Status.Connected);
-    }
-
+    public void onDataSent() {   }
 
 }
