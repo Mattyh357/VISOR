@@ -1,7 +1,11 @@
 /**
  * This class is part of the V.I.S.O.R app.
  * Represents a GPS sensor, handling location updates and status.
- * Extends MySensor to provide GPS-specific functionality.
+ * Extends MySensorGPS to provide the same functionality as regular GPS sensor would.
+ *
+ * This class is a FAKE gps sensor that is only to be used for demo function.
+ * It contains hardcoded list of waypoints and steps that this class will iterate over and present
+ * them in the exactly same way regular sensor would.
  *
  * @version 1.0
  * @since 08/02/2024
@@ -60,6 +64,11 @@ public class MySensorGPS_FAKE extends MySensorGPS {
 
     }
 
+    /**
+     * Generates random speed and polls the hardcoded list of location to get next stop.
+     *
+     * @return The last known location.
+     */
     private Location getNewLocation() {
         Random random = new Random();
         float randomSpeed = 10 + (25 - 10) * random.nextFloat();
@@ -96,8 +105,9 @@ public class MySensorGPS_FAKE extends MySensorGPS {
     }
 
 
-
-//TODO comments
+    /**
+     * Hardcoded list of waypoints for predetermined journey used in demo
+     */
     private void pushAllWaypoints() {
 
         pushWaypoint(56.4703956, -3.012);
@@ -421,6 +431,13 @@ public class MySensorGPS_FAKE extends MySensorGPS {
         pushWaypoint(56.4632609, -2.9741769);
 
     }
+
+    /**
+     * Pushes waypoint made out of latitude and longitude to the list of locations
+     *
+     * @param latitude Latitude of the waypoint
+     * @param longitude Longitude of the waypoint
+     */
     private void pushWaypoint(double latitude, double longitude) {
         Location location = new Location("");
         location.setLatitude(latitude);
@@ -429,7 +446,11 @@ public class MySensorGPS_FAKE extends MySensorGPS {
     }
 
 
-
+    /**
+     * List of Step for predetermined journey used in demo
+     *
+     * @return  List of steps
+     */
     public static List<Step> getFakeSteps() {
 
         List<Step> list = new ArrayList<>();
@@ -479,7 +500,11 @@ public class MySensorGPS_FAKE extends MySensorGPS {
 
     }
 
-
+    /**
+     * Hardcoded list of polyline points for predetermined journey used in demo
+     *
+     * @return List of polyline points
+     */
     public static List<LatLng> getFacePoly() {
 
         List<LatLng> list = new ArrayList<>();
