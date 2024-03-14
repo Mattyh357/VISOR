@@ -6,7 +6,7 @@ public class InstructionsByte {
     public static final byte ACK_OK = 0x01;
 
     public static final int SPEED_INSTRUCTION = 5;
-    public static final int NAVIGATION_IMG_INSTRUCTION = 6;
+    public static final int NAVIGATION_INSTRUCTION = 6;
 
     
 }
