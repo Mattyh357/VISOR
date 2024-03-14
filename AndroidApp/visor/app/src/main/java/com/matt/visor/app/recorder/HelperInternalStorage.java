@@ -18,25 +18,6 @@ import java.io.InputStreamReader;
 
 public class HelperInternalStorage {
 
-    /**
-     * Saves text to a file within the app's private storage.
-     *
-     * @param context  The application context.
-     * @param filename The name of the file to save the text to.
-     * @param text     The text to save.
-     * @return True if the text was successfully saved, false otherwise.
-     */
-
-    public static boolean saveTextToFile1(Context context, String filename, String text) {
-        try {
-            FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
-            fos.write(text.getBytes());
-            fos.close();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     /**
      * Saves text to a specified file and directory within the app's private storage.
