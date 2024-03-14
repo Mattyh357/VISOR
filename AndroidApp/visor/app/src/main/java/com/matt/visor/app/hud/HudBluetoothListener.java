@@ -16,22 +16,13 @@ public interface HudBluetoothListener {
     void onDisconnected();
 
     /**
-     * Called when all data has been sent to the HUD device.
-     */
-    void onAllDataSent();
-
-    /**
-     * Called when there is a request for boot data from the HUD device.
-     */
-    void onRequestBootData();
-
-    /**
-     * Called when the boot process of the HUD device is complete.
-     */
-    void onBootComplete();
-
-    /**
      * Called when the system is in the process of connecting to the HUD device.
      */
     void onConnecting();
+
+    /**
+     * Called when data has been successfully sent to the HUD device.
+     */
+    void onDataSent();
+
 }
