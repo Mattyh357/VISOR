@@ -65,7 +65,7 @@ public class SensorGpsFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
+     * @return root
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -143,7 +143,6 @@ public class SensorGpsFragment extends Fragment {
             return;
 
         // Format
-        // TODO units
         _rva.update("latitude",  String.valueOf(location.getLatitude()));
         _rva.update("longitude",  String.valueOf(location.getLongitude()));
         _rva.update("altitude",  Formatter.formatDistance(location.getAltitude(), true));
