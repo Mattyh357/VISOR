@@ -289,6 +289,14 @@ public class Journey {
     }
 
 
+    /**
+     * Returns the journey's GPS file.
+     *
+     * @return GPX file of the route.
+     */
+    public File gptGpxFile() {
+        return _gpxFile;
+    }
 
 
 }
