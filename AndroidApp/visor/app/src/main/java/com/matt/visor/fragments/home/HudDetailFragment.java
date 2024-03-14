@@ -8,33 +8,36 @@
 
 package com.matt.visor.fragments.home;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.matt.visor.R;
+import com.matt.visor.RideActivity;
 import com.matt.visor.TableKvpAdapter;
 import com.matt.visor.TableKvpItem;
 import com.matt.visor.TableKvpOnClickListener;
+import com.matt.visor.app.MySensorGPS;
+import com.matt.visor.app.MySensorGPS_FAKE;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentHudDetailBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HudDetailFragment extends Fragment implements TableKvpOnClickListener, SeekBar.OnSeekBarChangeListener {
+public class HudDetailFragment extends Fragment implements TableKvpOnClickListener {
 
     private FragmentHudDetailBinding _binding;
-    private TextView _txt_status;
-    private TextView _txt_speed;
+    private int _distance = 0;
+    private int _speed = 0;
 
     /**
      * Initializes the fragment's view and sets up UI components.
@@ -51,17 +54,57 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
         _binding = FragmentHudDetailBinding.inflate(inflater, container, false);
         View root = _binding.getRoot();
 
-        // Txt
-        _txt_status = _binding.txtStatus;
-        _txt_speed = _binding.txtSpeed;
-        _txt_speed.setText("50");
 
-        // Seekbar
-        SeekBar sb_speed = _binding.sbSpeed;
-        sb_speed.setOnSeekBarChangeListener(this);
+        // Seekbar - speed
+
+        _binding.sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                _binding.txtSpeed.setText(String.valueOf(progress));
+                _speed = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                sendDataSpeedAndDistance();
+            }
+        });
+
+
+        _binding.sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                _binding.txtDistance.setText(String.valueOf(progress));
+                _distance = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                sendDataSpeedAndDistance();
+            }
+        });
+
+
+        _binding.sbSpeed.setProgress(0);
+        _binding.sbDistance.setProgress(0);
+
 
         // Buttons
-        _binding.btnSendSpeed.setOnClickListener(v -> sendDataSpeed(sb_speed.getProgress()));
+        _binding.btnRunDemo.setOnClickListener(v -> {
+
+            // PretendGPS :)
+            app.deviceManager.setGPS(new MySensorGPS_FAKE());
+            app.saveNavigation(MySensorGPS_FAKE.getFakeSteps(), MySensorGPS_FAKE.getFacePoly());
+
+            Intent intent = new Intent(this.getActivity(), RideActivity.class);
+            startActivity(intent);
+        });
 
         // Images
         List<TableKvpItem<?>> data = new ArrayList<>();
@@ -77,21 +120,18 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
         _binding.imageRecycler.setLayoutManager(new GridLayoutManager(getContext(), 4));
         _binding.imageRecycler.setAdapter(_rva);
 
-        // Update status
-        app.deviceManager.getHUD().setStatusChangeListener(() -> _txt_status.setText(app.deviceManager.getHUD().getStatusString()));
-
-        //
+        // Root
         return root;
     }
 
     /**
-     * Sends the current speed setting to the device.
+     * Sends the current speed and distance to the device.
      *
-     * @param speed The speed value to send.
      */
-    private void sendDataSpeed(int speed) {
+    private void sendDataSpeedAndDistance() {
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-        app.deviceManager.getHUD().sendSpeed(speed);
+        app.deviceManager.getHUD().sendSpeed(_speed, _distance);
+        // TODO distance
     }
 
     /**
@@ -104,7 +144,7 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
         System.out.println("On item click : " + item.getKey());
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-        app.deviceManager.getHUD().sendImg(Integer.parseInt(item.getKey()));
+        app.deviceManager.getHUD().sendNav(Integer.parseInt(item.getKey()), 0);
     }
 
     /**
@@ -116,21 +156,19 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
         _binding = null;
     }
 
+
     /**
-     * Updates the displayed speed text when the seek bar progress changes.
-     *
-     * @param seekBar The SeekBar whose progress has changed.
-     * @param progress The current progress level.
-     * @param fromUser True if the progress change was initiated by the user.
+     * Removes Fake GPS sensor on load - if fake gps is used
      */
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        _txt_speed.setText(String.valueOf(progress));
+    public void onResume() {
+        super.onResume();
+
+        VisorApplication app = (VisorApplication) requireActivity().getApplication();
+        if(app.deviceManager.getGPS() instanceof MySensorGPS_FAKE){
+            app.deviceManager.setGPS(new MySensorGPS());
+            app.deviceManager.getGPS().activateSensor(getActivity());
+            app.unSaveNavigation();
+        }
     }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {}
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {}
 }
