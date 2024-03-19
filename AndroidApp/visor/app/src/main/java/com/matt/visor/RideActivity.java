@@ -31,7 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.matt.visor.app.MySensorGPS;
-import com.matt.visor.app.NavigatorThingy;
+import com.matt.visor.app.MySensorGPS_FAKE;
+import com.matt.visor.app.Navigator;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.app.recorder.Formatter;
 import com.matt.visor.app.recorder.RecorderListener;
@@ -69,7 +70,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
     private Marker _mapMarker;
     private MySensorGPS _gps;
 
-    private NavigatorThingy _navigator;
+    private Navigator _navigator;
 
 
     @Override
@@ -105,6 +106,14 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
 
         // Initialize data fields
         resetView();
+
+        // if this is demo -> pretend that I clicked start
+        VisorApplication app = (VisorApplication) getApplication();
+        if(app.deviceManager.getGPS() instanceof MySensorGPS_FAKE){
+            View view = new View(this);
+            view.setId(R.id.ride_btn_startPauseSave);
+            onClick(view);
+        }
     }
 
     @Override
@@ -138,6 +147,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
             unbindAndStopService();
             resetView();
         }
+        // Save
         else if(v.getId() == R.id.ride_btn_save) {
             // TODO dialog
             saveRide();
@@ -162,15 +172,11 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveRide() {
-
-        // TODO get all data...
-
-
         System.out.println("Saving route");
 
         // TODO center map on the thing I want to save
-
         // TODO display saving loading bar
+
         _recorderService.saveData(_map, this);
 
         // Hide loading bar with some on some listener
@@ -181,6 +187,8 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         // Start pause icon
         if (_running && !_paused) {
             _btnStartPauseSave.setImageResource(R.drawable.icon_ride_pause);
+        } else if (_running && _paused) {
+            _btnStartPauseSave.setImageResource(R.drawable.icon_ride_resume);
         } else {
             _btnStartPauseSave.setImageResource(R.drawable.icon_ride_start);
         }
@@ -231,7 +239,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         if(_running){
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
             builder.setTitle(R.string.dialog_confirm);
-            builder.setMessage("Please stop ride first"); // TODO text
+            builder.setMessage("Please stop ride first");
             builder.setPositiveButton("OK", (dialog, id) -> {});
 
             AlertDialog alert = builder.create();
@@ -254,11 +262,6 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
 
      */
 
-
-
-
-
-
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -270,13 +273,10 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         public void onServiceDisconnected(ComponentName arg0) {}
     };
 
-
-
-
     @Override
     public void onNewData(double speed, double distance, LatLng latLng) {
 
-        sendDataToHud(speed, latLng);
+        sendDataToHud(speed, distance, latLng);
 
 
         runOnUiThread(() -> {
@@ -302,18 +302,27 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void sendDataToHud(double speed, LatLng latLng) {
+    private void sendDataToHud(double speed, double distance, LatLng latLng) {
 
         VisorApplication app = (VisorApplication) getApplication();
 
+        speed = Double.parseDouble(String.format("%.1f", speed));
+        distance =  Double.parseDouble(String.format("%.1f", distance));
+
         if(_navigator == null) {
-            int speedRounded = (int)speed;
-            app.deviceManager.getHUD().sendSpeed(speedRounded);
+            app.deviceManager.getHUD().sendSpeedAndDistance(speed, distance);
             return;
         }
 
-        if(_navigator.update(latLng))
-            app.deviceManager.getHUD().sendImg(_navigator.getManeuverID());
+        System.out.println("Distance: " + _navigator.getDistanceToNext());
+        System.out.println("Distance: " + _navigator.getDistanceToNext());
+        System.out.println("Distance: " + _navigator.getDistanceToNext());
+
+        _navigator.update(latLng);
+        if(_navigator.getDistanceToNext() < 0.3D) // if distance is less than 100m
+            app.deviceManager.getHUD().sendNav(_navigator.getManeuverID(), (int)(_navigator.getDistanceToNext() * 1000));
+        else
+            app.deviceManager.getHUD().sendSpeedAndDistance(speed, distance);
 
     }
 
@@ -330,6 +339,9 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println("COMPLETE");
         System.out.println("COMPLETE");
         System.out.println("COMPLETE");
+
+
+        // TODO redirect
     }
 
 
@@ -366,7 +378,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         // ROUTE
         if(app.isNavigationSaved()){
             // TODO steps
-            _navigator = new NavigatorThingy(app.getSteps());
+            _navigator = new Navigator(app.getSteps());
             drawRouteOnMap(app.getPolylineRoute());
         }
 
