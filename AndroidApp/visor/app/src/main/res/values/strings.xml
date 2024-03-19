@@ -54,6 +54,7 @@
     <string name="distance">Distance</string>
     <string name="speed">Speed</string>
     <string name="maveuver">Maneuver</string>
+    <string name="export_gpx">Export GPX</string>
 
 
 </resources>
