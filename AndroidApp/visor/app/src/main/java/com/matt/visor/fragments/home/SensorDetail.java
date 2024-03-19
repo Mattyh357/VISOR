@@ -32,3 +32,5 @@ public class SensorDetail extends Fragment {
         _binding = null;
     }
 }
+
+// TODO implement :D
