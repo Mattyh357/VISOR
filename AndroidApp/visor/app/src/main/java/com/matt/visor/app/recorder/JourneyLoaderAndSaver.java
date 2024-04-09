@@ -176,7 +176,6 @@ public class JourneyLoaderAndSaver {
      * @param journey  The journey object containing metadata and waypoints.
      * @param callback The callback to notify upon completion of the save operation.
      */
-
     public static void saveJourney(Context context, GoogleMap map, Journey journey, Callback callback) {
         new Thread(() -> {
             System.out.println("Processing started");
@@ -209,7 +208,7 @@ public class JourneyLoaderAndSaver {
 
             // Notify once processing is done
             if (callback != null)
-                callback.onSaveComplete();
+                callback.onSaveComplete(filename);
 
         }).start();
     }
@@ -253,7 +252,7 @@ public class JourneyLoaderAndSaver {
      * Interface to notify when the journey save operation is complete.
      */
     public interface Callback {
-        void onSaveComplete();
+        void onSaveComplete(String journeyID);
     }
 
 }
