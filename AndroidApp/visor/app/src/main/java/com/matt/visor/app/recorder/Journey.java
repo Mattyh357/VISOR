@@ -1,4 +1,10 @@
-// TODO comment
+/**
+ * This class is part of the V.I.S.O.R app.
+ * The Journey class serves as a data struct to hold data regarding one entire journey.
+ *
+ * @version 1.0
+ * @since 08/02/2024
+ */
 
 package com.matt.visor.app.recorder;
 
@@ -15,7 +21,7 @@ import java.util.Map;
 
 public class Journey {
 
-
+    private String _id;
     private List<Waypoint> _waypoints;
 
     // Times
@@ -30,15 +36,14 @@ public class Journey {
     private double _totalElevationDescended;
     private double _averageSpeed;
 
-
+    // Images
     private Bitmap image;
     public static final int DEFAULT_IMAGE = R.drawable.icon_history_24;
 
+    // GPX file
     private File _gpxFile;
 
-    private String _id;
-
-
+    // XML string constants identifying how are things saved
     public static final String XML_TimeStarted = "timeStarted";
     public static final String XML_TimeFinished = "timeFinished";
     public static final String XML_TimeTotalTime = "totalTime";
