@@ -30,7 +30,7 @@ public class SplashScreen extends AppCompatActivity {
     private ProgressBar _progressBar;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final int WAIT_TIME = 2100;
+    private final int WAIT_TIME = 1500;
 
     private PermissionHelper _permissionHelper;
 
@@ -42,22 +42,8 @@ public class SplashScreen extends AppCompatActivity {
 
         _progressBar = findViewById(R.id.splash_progressBar);
 
-
         // Permissions
-        List<String> listOfPermissions = new ArrayList<>();
-        // Map
-        listOfPermissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        listOfPermissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
-        listOfPermissions.add(android.Manifest.permission.INTERNET);
-
-        // Bluetooth
-        listOfPermissions.add(android.Manifest.permission.BLUETOOTH);
-        listOfPermissions.add(android.Manifest.permission.BLUETOOTH_ADMIN);
-        listOfPermissions.add(android.Manifest.permission.BLUETOOTH_CONNECT);
-        listOfPermissions.add(Manifest.permission.BLUETOOTH_SCAN);
-
-        //Service
-        listOfPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
+        List<String> listOfPermissions = getListOfPermissions();
 
         //Permission helper
         _permissionHelper = new PermissionHelper(this, listOfPermissions, new PermissionHelper.Callback() {
@@ -72,6 +58,29 @@ public class SplashScreen extends AppCompatActivity {
         });
 
         _permissionHelper.start();
+    }
+
+    /**
+     * Hardcoded list of permissions required for proper function of the app
+     * @return List of permissions
+     */
+    @NonNull
+    private static List<String> getListOfPermissions() {
+        List<String> listOfPermissions = new ArrayList<>();
+        // Map
+        listOfPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        listOfPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        listOfPermissions.add(Manifest.permission.INTERNET);
+
+        // Bluetooth
+        listOfPermissions.add(Manifest.permission.BLUETOOTH);
+        listOfPermissions.add(Manifest.permission.BLUETOOTH_ADMIN);
+        listOfPermissions.add(Manifest.permission.BLUETOOTH_CONNECT);
+        listOfPermissions.add(Manifest.permission.BLUETOOTH_SCAN);
+
+        //Service
+        listOfPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
+        return listOfPermissions;
     }
 
     /**
