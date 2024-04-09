@@ -90,7 +90,6 @@ public class HomeFragment extends Fragment {
         app.deviceManager.getHUD().setStatusChangeListener(null);
         _binding = null;
 
-
         super.onDestroyView();
     }
 }
