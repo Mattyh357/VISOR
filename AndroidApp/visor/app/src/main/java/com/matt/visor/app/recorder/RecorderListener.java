@@ -29,6 +29,6 @@ public interface RecorderListener {
     /**
      * Called when ride is saved
      */
-    void onSavingComplete();
+    void onSavingComplete(String journeyID);
 
 }
