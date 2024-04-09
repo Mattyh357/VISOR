@@ -83,7 +83,14 @@ public class HudUnit implements HudBluetoothListener{
         return "Unknown";
     }
 
-    // TODO comment it
+    /**
+     * Sends data to the HUD device. If maneuverDistance is either null or too big, sends speed and
+     * total distance, otherwise sends maneuver icon and distance to it.
+     * @param speed Current speed
+     * @param distance Total distance
+     * @param maneuverDistance Distance to next maneuver or Null
+     * @param maneuverIcon ID of maneuver icon
+     */
     public void sendData(double speed, double distance, Double maneuverDistance, int maneuverIcon) {
 
         speed = Double.parseDouble(String.format("%.1f", speed));
