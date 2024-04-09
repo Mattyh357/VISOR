@@ -16,7 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.matt.visor.GoogleMap.Step;
 import com.matt.visor.app.recorder.HaversineCalculator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +47,6 @@ public class Navigator {
         MANEUVER_ID.put(DESTINATION_STR, 18);
     }
 
-
-
-
-    // TODO test what number is adequate
     private static final double THRESHOLD = 50; // Seems to work just find
     private final List<Step> _steps;
     private int _currentStepIndex = 0;
@@ -63,9 +58,7 @@ public class Navigator {
      * @param steps The list of navigation steps to follow.
      */
     public Navigator(List<Step> steps) {
-        // TODO hardcoded step
-        steps = getHardcodedSteps();
-        _steps = getHardcodedSteps();
+        _steps = steps;
     }
 
     /**
@@ -110,9 +103,7 @@ public class Navigator {
                     , _steps.get(_currentStepIndex).endLocation.longitude
             );
         }
-
         return true;
-
     }
 
 
@@ -151,53 +142,4 @@ public class Navigator {
         return _distanceToNext / 1000;
     }
 
-
-    // TODO remove
-    public static List<Step> getHardcodedSteps() {
-
-        List<Step> list = new ArrayList<>();
-
-        Step step1 = new Step();
-        step1.endLocation = new LatLng(56.47035529999999, -3.0120029);
-        step1.maneuver = null;
-        list.add(step1);
-
-        Step step2 = new Step();
-        step2.endLocation = new LatLng(56.4706489, -3.0108241);
-        step2.maneuver = "turn-left";
-        list.add(step2);
-
-        Step step3 = new Step();
-        step3.endLocation = new LatLng(56.4716987, -3.0118959);
-        step3.maneuver = "turn-left";
-        list.add(step3);
-
-        Step step4 = new Step();
-        step4.endLocation = new LatLng(56.4638752, -2.9802262);
-        step4.maneuver = "roundabout-left";
-        list.add(step4);
-
-        Step step5 = new Step();
-        step5.endLocation = new LatLng(56.46443, -2.9733292);
-        step5.maneuver = "roundabout-left";
-        list.add(step5);
-
-        Step step6 = new Step();
-        step6.endLocation = new LatLng(56.46416680000001, -2.9719381);
-        step6.maneuver = "roundabout-left";
-        list.add(step6);
-
-        Step step7 = new Step();
-        step7.endLocation = new LatLng(56.4637045, -2.9714995);
-        step7.maneuver = "turn-right";
-        list.add(step7);
-
-        Step step8 = new Step();
-        step8.endLocation = new LatLng(56.4632277, -2.973336);
-        step8.maneuver = "turn-right";
-        list.add(step8);
-
-
-        return list;
-    }
 }
