@@ -8,7 +8,10 @@
 
 package com.matt.visor.fragments.history;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.DownloadManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -120,6 +123,16 @@ public class HistoryDetailFragment extends Fragment {
      * @param filename String containing the name of the saved file
      */
     private void showDownloadCompleteNotification(String filename) {
+        // Create channel
+        NotificationChannel serviceChannel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_TITLE,
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        NotificationManager manager = getSystemService(getContext(), NotificationManager.class);
+        manager.createNotificationChannel(serviceChannel);
+
+        // Notification
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(getContext().NOTIFICATION_SERVICE);
 
         Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
@@ -135,7 +148,10 @@ public class HistoryDetailFragment extends Fragment {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
+        builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+
         notificationManager.notify(0, builder.build());
+        Toast.makeText(getContext(), "Exported!", Toast.LENGTH_SHORT).show();
     }
 
     /**
