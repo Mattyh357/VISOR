@@ -55,6 +55,8 @@
     <string name="speed">Speed</string>
     <string name="maveuver">Maneuver</string>
     <string name="export_gpx">Export GPX</string>
+    <string name="sensor_details_title">Details for sensor:</string>
+    <string name="not_implemented">(not implemented)</string>
 
 
 </resources>
