@@ -83,6 +83,18 @@ public class HudUnit implements HudBluetoothListener{
         return "Unknown";
     }
 
+    // TODO comment it
+    public void sendData(double speed, double distance, Double maneuverDistance, int maneuverIcon) {
+
+        speed = Double.parseDouble(String.format("%.1f", speed));
+        distance =  Double.parseDouble(String.format("%.1f", distance));
+
+        if(maneuverDistance == null || maneuverDistance > 0.3D)
+            sendSpeedAndDistance(speed, distance);
+        else
+            sendNav(maneuverIcon, (int)(maneuverDistance * 1000));
+    }
+
     /**
      * Sends a speed value to the HUD device.
      *
@@ -97,10 +109,10 @@ public class HudUnit implements HudBluetoothListener{
     /**
      * Sends an image identifier to the HUD device for display.
      *
-     * @param image The image identifier to send.
+     * @param imageID The image identifier to send.
      */
-    public void sendNav(int image, int distance) {
-        String data = image + "," + distance;
+    public void sendNav(int imageID, int distance) {
+        String data = imageID + "," + distance;
         _bt.sendDataTest(InstructionsByte.NAVIGATION_INSTRUCTION, data);
     }
 
