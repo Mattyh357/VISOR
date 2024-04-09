@@ -25,9 +25,9 @@
 
     <fragment
         android:id="@+id/navigation_sensor_detail"
-        android:name="com.matt.visor.fragments.home.SensorDetail"
+        android:name="com.matt.visor.fragments.home.SensorDetailFragment"
         android:label="@string/title_sensor_detail"
-        tools:layout="@layout/fragment_config" />
+        tools:layout="@layout/fragment_sensor_detail" />
 
 
     <!--  RIDES  -->
