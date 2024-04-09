@@ -1,3 +1,13 @@
+/**
+ * This class is part of the V.I.S.O.R app.
+ * The SensorDetailFragment is a placeholder class which is supposed to be used to display details
+ * for connected sensor. Currently only displays the name.
+ *
+ * @version 1.0
+ * @since 21/02/2024
+ */
+
+
 package com.matt.visor.fragments.home;
 
 import android.os.Bundle;
@@ -12,7 +22,7 @@ import com.matt.visor.app.MySensor;
 import com.matt.visor.app.VisorApplication;
 import com.matt.visor.databinding.FragmentSensorDetailBinding;
 
-public class SensorDetailFragmet extends Fragment {
+public class SensorDetailFragment extends Fragment {
 
     private FragmentSensorDetailBinding _binding;
 
@@ -42,5 +52,3 @@ public class SensorDetailFragmet extends Fragment {
         _binding = null;
     }
 }
-
-// TODO implement :D
