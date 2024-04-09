@@ -164,9 +164,9 @@ public class Recorder {
     public void saveData(Context context, GoogleMap map) {
         JourneyLoaderAndSaver.saveJourney(context, map, _journey, new JourneyLoaderAndSaver.Callback() {
             @Override
-            public void onSaveComplete() {
+            public void onSaveComplete(String journeyID) {
                 if(_recorderListener != null)
-                    _recorderListener.onSavingComplete();
+                    _recorderListener.onSavingComplete(journeyID);
             }
         });
     }
