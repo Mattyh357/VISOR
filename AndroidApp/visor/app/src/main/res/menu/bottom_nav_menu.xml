@@ -16,9 +16,9 @@
         android:icon="@drawable/icon_history_24"
         android:title="@string/title_history" />
 
-    <item
-        android:id="@+id/navigation_config"
-        android:icon="@drawable/icon_config_24"
-        android:title="@string/title_config" />
+<!--    <item-->
+<!--        android:id="@+id/navigation_config"-->
+<!--        android:icon="@drawable/icon_config_24"-->
+<!--        android:title="@string/title_config" />-->
 
 </menu>
