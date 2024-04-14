@@ -29,6 +29,8 @@ import java.util.Map;
 
 public class JourneyLoaderAndSaver {
 
+    private static final String DEFAULT_GPX_RIDE_NAME  = "VISOR ride";
+
     public static final String JOURNEY_FOLDER = "journeys";
 
     /**
@@ -118,7 +120,10 @@ public class JourneyLoaderAndSaver {
      * @return A Map containing the parsed key-value pairs from the XML file.
      */
     private static Map<String, String> getParsedMapFromFile(File file) {
-        String content = readFileContent(file); // TODO check for null
+        String content = readFileContent(file);
+        if(content == null)
+            return null;
+
         Map<String, String> map = HelperXML.fromXml(content);
         return map;
     }
@@ -189,7 +194,7 @@ public class JourneyLoaderAndSaver {
             boolean met_save_status = HelperInternalStorage.saveTextToFile(context, path, filename, "xml", journey.metadataXmlString());
 
             // GPX
-            HelperGPX gpx = new HelperGPX();
+            HelperGPX gpx = new HelperGPX(DEFAULT_GPX_RIDE_NAME);
             String gpxString = gpx.getGPX(journey.getAllWaypoints());
             boolean gpx_save_status = HelperInternalStorage.saveTextToFile(context, path, filename, "gpx", gpxString);
 
