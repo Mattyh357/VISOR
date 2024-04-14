@@ -15,7 +15,7 @@ import com.matt.visor.R;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -112,9 +112,18 @@ public class Journey {
     }
 
 
-    // TODO SPLIT
+    /**
+     * Adds a new waypoint for the list of waypoint. If this is not the first waypoint, calculates
+     * all necessary values based on previous waypoints.
+     * Calculated:
+     * - Total Time
+     * - Total Distance
+     * - Elevation Climbed and Descended
+     * - Average Speed
+     *
+     * @param waypoint Current waypoint
+     */
     public void addWaypoint(Waypoint waypoint) {
-        System.out.println("Lat: " + waypoint.getLatitude() + " Lon: " + waypoint.getLongitude());
 
         // If first one - set times but don't calculate anything
         if(_waypoints.size() == 0) {
@@ -128,10 +137,31 @@ public class Journey {
         _timeFinished = waypoint.getTime();
         _timeTotal = _timeFinished - _timeStarted;
 
-        System.out.println("finished: " + _timeFinished);
-        System.out.println("Total time: " + _timeTotal);
-
         // Distance
+        _totalDistance += calculateDistanceDelta(waypoint);
+
+        // Elevation
+        double elevationDelta = calculateElevationDelta(waypoint);
+        if(elevationDelta > 0)
+            _totalElevationClimbed += elevationDelta;
+        else if (elevationDelta < 0)
+            _totalElevationDescended += elevationDelta;
+
+        // Average speed
+        _averageSpeed = calculateAvgSpeed();
+
+        // add to the list
+        _waypoints.add(waypoint);
+    }
+
+    /**
+     * Calculates the difference in distance (Using Haversine formula) from the last waypoint to the
+     * current one
+     *
+     * @param waypoint Current waypoint
+     * @return Difference in distance in Km
+     */
+    private double calculateDistanceDelta(Waypoint waypoint) {
         double deltaDistance = HaversineCalculator.haversineDistance(
                 getLastWaypoint().getLatitude()
                 , getLastWaypoint().getLongitude()
@@ -139,36 +169,27 @@ public class Journey {
                 , waypoint.getLongitude()
         );
 
-        _totalDistance += deltaDistance / 1000; // Convert metres -> kilometres
-
-        // Elevation
-        double elevationDelta = waypoint.getAltitude() - getLastWaypoint().getAltitude();
-        if(elevationDelta > 0)
-            _totalElevationClimbed += elevationDelta;
-        else if (elevationDelta < 0)
-            _totalElevationDescended += elevationDelta;
-
-
-        System.out.println("Ele delta: " + elevationDelta);
-
-        // Average speed
-        // TODO avg speed not working :D
-        double timeInHour = (double) _timeTotal / 1000L / 60L / 60L;
-        _averageSpeed = _totalDistance / timeInHour;
-
-        _averageSpeed = -123;
-
-        System.out.println("Total distance KM: " + _totalDistance);
-        System.out.println("Time in Hour: " + timeInHour);
-        System.out.println("Time in min: " + timeInHour * 60);
-
-        System.out.println("speed: " + waypoint.getSpeed());
-        System.out.println("avg speed: " + _averageSpeed);
-
-        // add to the list
-        _waypoints.add(waypoint);
+        return (deltaDistance / 1000); // Convert metres -> kilometres
     }
 
+    /**
+     * Calculates the difference in altitude from last waypoint to the current one
+     *
+     * @param waypoint Current waypoint
+     * @return Difference in elevation
+     */
+    private double calculateElevationDelta(Waypoint waypoint) {
+        return waypoint.getAltitude() - getLastWaypoint().getAltitude();
+    }
+
+    /**
+     * Calculates average speed based on total distance over total time in hour
+     *
+     * @return Average speed in Km/h
+     */
+    private double calculateAvgSpeed() {
+        return (getTotalDistance() / (getTimeTotal() / 3600F));
+    }
 
     /**
      * Gets the last waypoint in the journey or a new waypoint if none exist.
@@ -279,7 +300,7 @@ public class Journey {
      * @return XML string representation of the journey's metadata.
      */
     public String metadataXmlString() {
-        Map<String, String> data = new HashMap<>();
+        Map<String, String> data = new LinkedHashMap<>();
 
         data.put(XML_TimeStarted, Long.toString(_timeStarted));
         data.put(XML_TimeFinished, Long.toString(_timeFinished));
