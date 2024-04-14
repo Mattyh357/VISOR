@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class Navigator {
 
-    private static final Map<String, Integer> MANEUVER_ID = new HashMap<>();
+    public static final Map<String, Integer> MANEUVER_ID = new HashMap<>();
     private static final String DESTINATION_STR = "destination";
 
     static {
