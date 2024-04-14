@@ -143,9 +143,9 @@ public class RidesNavigateFragment extends Fragment {
         LatLng origin = _mapMarkerOrigin.getPosition();
         LatLng destination = _mapMarkerDestination.getPosition();
 
-        //TODO hardcoded stuff :)
-//        origin = new LatLng(56.4706, -3.0119);
-//        destination = new LatLng(56.4635, -2.9737);
+        // Hardcoded stuff :) for testing purposes only
+        // origin = new LatLng(56.4706, -3.0119);
+        // destination = new LatLng(56.4635, -2.9737);
 
 
         GoogleDirectionsAPI googleDirectionsAPI = new GoogleDirectionsAPI(getApiKey());
