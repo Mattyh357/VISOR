@@ -13,25 +13,16 @@ import java.util.List;
 
 public class HelperGPX {
 
-    private String _name;
-    private String _activity;
-
-
-    // TODO to be removed
-    public HelperGPX() {
-        //TODO REMOVE THIS CRAP!
-        // check strava for what needs to be there
-    }
+    private final String _name;
+    private static final String ACTIVITY_NAME = "cycling";
 
     /**
-     * Initializes HelperGPX with specified name and activity.
+     * Initializes HelperGPX with specified name.
      *
      * @param name     The name of the GPX track.
-     * @param activity The type of activity.
      */
-    public HelperGPX(String name, String activity) {
+    public HelperGPX(String name) {
         _name = name;
-        _activity = activity;
     }
 
 
@@ -49,7 +40,7 @@ public class HelperGPX {
 
         sb.append(getDeclaration());
         sb.append(getMetadata(Formatter.epochToZulu(time)));
-        sb.append(getHead(_name, _activity));
+        sb.append(getHead(_name, ACTIVITY_NAME));
         sb.append(getBody(list));
         sb.append(getTail());
 
@@ -92,7 +83,12 @@ public class HelperGPX {
         sb.append("    <time>").append(Formatter.epochToZulu(waypoint.getTime())).append("</time>");
         sb.append("\n");
 
-        // TODO fix this
+        /*
+         * TODO GPX for additional sensors:
+         * hr - hearth rate
+         * cad - cadence
+         * power - power meter
+         */
 
 //        if(waypoint.hasExtension()){
 //            sb.append("    <extensions>");
