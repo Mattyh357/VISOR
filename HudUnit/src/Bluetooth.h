@@ -34,10 +34,10 @@
 #define ACK_OK 0x01
 
 /** @brief Instruction number identifying that received data are speed related. */
-#define INSTRUCTION_SPEED_TEST 5
+#define INSTRUCTION_SPEED_TEST 0x05
 
 /** @brief Instruction number identifying that received data are navigation. */
-#define INSTRUCTION_NAVIG_TEST 6
+#define INSTRUCTION_NAVIG_TEST 0x06
 
 /** @brief TODO not sure yet. */
 #define CHECKSUM_SIZE 1
