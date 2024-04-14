@@ -39,8 +39,7 @@ public class HudUnit implements HudBluetoothListener{
      */
     public HudUnit(Activity activity, String macAddress, String sUUID, String cUUID) {
         _bt = new HudBluetoothManager(activity, this, macAddress, sUUID, cUUID);
-
-        // TODO boot file
+        
         _status = Status.Disconnected;
         _activity = activity;
     }
