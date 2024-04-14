@@ -29,19 +29,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-//TODO resend on invalid ack
-//TODO resend on invalid ack
-//TODO resend on invalid ack
-//TODO resend on invalid ack
-
-
 public class HudBluetoothManager {
+
+    // Client Characteristic Configuration Descriptor for notification
+    private static final String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
+
 
     // Bluetooth
     private static String _macAddress;
     private static UUID _serviceUUID;
     private static UUID _characteristicUUID;
-    private final BluetoothManager _bluetoothManager;
     private final BluetoothAdapter _bluetoothAdapter;
     private BluetoothGatt _bluetoothGatt;
 
@@ -49,10 +46,9 @@ public class HudBluetoothManager {
     private boolean _connected = false;
 
 
-
-    // Chunks
-    private final int DEFAULT_CHUNK_SIZE = 20;
-    private final int OPTIMAL_CHUNK_SIZE = 100; // Should be more than enough
+    // MTU
+    private static final int DEFAULT_CHUNK_SIZE = 20;
+    private static final int OPTIMAL_CHUNK_SIZE = 100; // Should be more than enough as it should fit into 20
     private int _chunkSize = DEFAULT_CHUNK_SIZE;
 
     // Listener
@@ -60,7 +56,9 @@ public class HudBluetoothManager {
 
     // Timers
     private Timer ackTimeoutTimer;
-    private final long ACK_TIMEOUT = 1000;
+    private static final long ACK_TIMEOUT = 1000;
+
+    private byte[] _currentPayload;
 
     /**
      * Initializes Bluetooth connection parameters.
@@ -78,7 +76,7 @@ public class HudBluetoothManager {
         _listener = listener;
 
         // Init bluetooth
-        _bluetoothManager = (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager _bluetoothManager = (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
         _bluetoothAdapter = _bluetoothManager.getAdapter();
     }
 
@@ -88,7 +86,6 @@ public class HudBluetoothManager {
      * @param activity The context for the connection attempt.
      */
     @SuppressLint("MissingPermission")
-    //TODO permissions
     public void connect(Activity activity) {
         System.out.println("Trying to connect");
         BluetoothDevice device = _bluetoothAdapter.getRemoteDevice(_macAddress);
@@ -118,59 +115,48 @@ public class HudBluetoothManager {
         if(!_connected)
             return;
 
+        // Make payload
         String dataToSend = instruction + "," + payload;
         byte[] data = dataToSend.getBytes();
+        _currentPayload = addChecksum(data);
 
-        byte[] withChecksum = addChecksum(data);
-
-        writeDataTest(withChecksum);
-        // TODO save somewhere and remove on ok ack , resend on false ack
+        // Send
+        writeCurrentPayload();
     }
 
 
     /**
-     * Writes data to the Bluetooth device if connected and service is available.
-     *
-     * @param data The byte array data to write to the device.
+     * Writes data to the Bluetooth device if connected and there is payload to write.
      */
     @SuppressLint("MissingPermission")
-    private void writeDataTest(byte[] data) {
-        System.out.println("wirting test Data");
-        // Stop if there is no gatt
+    private void writeCurrentPayload() {
         if(_bluetoothGatt == null){
             System.out.println("Write data - GATT is null");
             return;
         }
+
+        if(_currentPayload == null){
+            System.out.println("Payload is null - nothing to write");
+            return;
+        }
+
+        // Starts the timer
+        startAckTimeoutTimer();
 
         // Write
         BluetoothGattService service = _bluetoothGatt.getService(_serviceUUID);
         if (service != null) {
             BluetoothGattCharacteristic characteristic = service.getCharacteristic(_characteristicUUID);
             if (characteristic != null) {
-                characteristic.setValue(data);
+                characteristic.setValue(_currentPayload);
                 _bluetoothGatt.writeCharacteristic(characteristic);
             }
         }
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
-     * Starts a timer to handle acknowledgment timeout for chunk resending.
+     * Starts a timer to handle acknowledgment timeout for payload resending.
      */
     private void startAckTimeoutTimer() {
         if (ackTimeoutTimer != null) {
@@ -180,7 +166,7 @@ public class HudBluetoothManager {
         ackTimeoutTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                resendChunk();
+                writeCurrentPayload();
             }
         }, ACK_TIMEOUT);
     }
@@ -195,13 +181,6 @@ public class HudBluetoothManager {
         }
     }
 
-    /**
-     * Resends the current chunk by simulating an error acknowledgment.
-     */
-    private void resendChunk() {
-        System.out.println("RESEND - by sending fake error ACK");
-        onReceivedData(InstructionsByte.ACK_ERROR);
-    }
 
     /**
      * Adds a checksum byte to the data array for error checking.
@@ -230,66 +209,27 @@ public class HudBluetoothManager {
     }
 
 
-
-
-
-
-
     /**
-     * Handles received data instructions from the Bluetooth device.
-     * Processes various instructions like ACK_OK, ACK_ERROR, and boot data requests.
-     * ACK_OK: Confirms successful data reception, moves to next chunk, or ends transmission.
-     * ACK_ERROR: Indicates error, attempts to resend the current chunk.
-     * REQUEST_BOOT_DATA: Initiates sending of boot data sequence.
-     * RESTART_BOOTING and BOOT_DATA_PROCESSED: Manage booting process states.
+     * Handles received data instructions from the Bluetooth device. When called, it first disables
+     * the timeout-timer and then resends the payload on ACK_ERROR.
      *
      * @param value The byte value of the received instruction.
      */
     private void onReceivedData(byte value) {
+        // Cancel timer as something was received
+        cancelAckTimeoutTimer();
 
-        // Can received: ACK_OK, ACK_ERROR. REQUEST_BOOT_DATA, RESTART_BOOTING, BOOT_DATA_PROCESSED
+        // Data not ok
+        if(value == InstructionsByte.ACK_ERROR)
+            writeCurrentPayload();
 
-//        if(value == InstructionsByte.ACK_OK) {
-//            System.out.println("ACK OK! removing first chunk and moving on");
-//            _remainingChunks.poll();
-//
-//            if(_remainingChunks.isEmpty()) {
-//                // TODO DO SOMETHING :)
-//                System.out.println("HAVE NO MORE DATA TO SEND");
-//                cancelAckTimeoutTimer();
-//                Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onAllDataSent);
-//            } else {
-//                sendNextChunk();
-//            }
-//        }
-//        else if(value == InstructionsByte.ACK_ERROR) {
-//            System.out.println("DATA WAS NOT OK!!!! not removing first and sending it again");
-//            sendNextChunk();
-//        }
-//        else if (value == InstructionsByte.REQUEST_BOOT_DATA){
-//            System.out.println("START BLASTING BOOT DATA - TODO automate");
-//            Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onRequestBootData);
-//            sendBootData();
-//            _booted = false;
-//        }
-//        else if (value == InstructionsByte.BOOT_DATA_PROCESSED){
-//            System.out.println("BOOTING Complete");
-//            Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onBootComplete);
-//            _booted = true;
-//        }
-//        else{
-//            System.out.println("receivedUnknownInstruction...");
-//        }
+        // Data was ok - null it to make sure it won't be sent again
+        else if(value == InstructionsByte.ACK_OK)
+            _currentPayload = null;
+
+        else
+            System.out.println("Received unknown instruction: " + value);
     }
-
-
-
-
-
-
-
-
-
 
     /**
      * Callback for changes in BluetoothGatt state, such as connection changes, service discoveries, MTU changes, and characteristic changes.
@@ -331,7 +271,7 @@ public class HudBluetoothManager {
                         gatt.setCharacteristicNotification(characteristic, true);
 
                         // Enable remote notifications
-                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")); // TODO magic
+                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG));
                         if (descriptor != null) {
                             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                             gatt.writeDescriptor(descriptor);
