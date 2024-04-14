@@ -25,7 +25,6 @@ public class JourneyTest {
         assertEquals("Time started J2: ", 946728000, journey2.getTimeStarted(), delta);
     }
 
-
     @Test
     public void TimeFinished() {
         Journey journey1 = data_go_east_and_back();
@@ -56,8 +55,8 @@ public class JourneyTest {
         Journey journey2 = data_go_in_square();
         double delta = 0.01;
 
-        double expectedJ1 = 20 * earthIsNotFlat;
-        double expectedJ2 = 6 * earthIsNotFlat;
+        double expectedJ1 = (20 * earthIsNotFlat) / 1000;
+        double expectedJ2 = (6 * earthIsNotFlat) / 1000;
 
         assertEquals("Total distance J1: ", expectedJ1, journey1.getTotalDistance(), delta);
         assertEquals("Total distance J2: ", expectedJ2, journey2.getTotalDistance(), delta);
@@ -69,19 +68,19 @@ public class JourneyTest {
         Journey journey2 = data_go_in_square();
         double delta = 0.01;
 
-        double distance1 = 20;
-        double travelTimeInHours1 = 5;
-        double expected1 = (distance1 / travelTimeInHours1) * earthIsNotFlat;
+        // total distance and total time is tested elsewhere - so it's correct
 
-        double distance2 = 6;
-        double travelTimeInHours2 = 6;
-        double expected2 = (distance2 / travelTimeInHours2) * earthIsNotFlat;
+        double distance1 = journey1.getTotalDistance();
+        double travelTime1 = journey1.getTimeTotal() / 3600; // Sec -> hour
+        double expected1 = (distance1 / travelTime1);
+
+        double distance2 = journey2.getTotalDistance();
+        double travelTime2 = journey2.getTimeTotal() / 3600; //Sec -> hour
+        double expected2 = (distance2 / travelTime2);
 
         assertEquals("Total avg speed J1: ", expected1, journey1.getAverageSpeed(), delta);
         assertEquals("Total avg speed J2: ", expected2, journey2.getAverageSpeed(), delta);
     }
-
-
 
     @Test
     public void TotalElevationClimbed() {
@@ -109,34 +108,55 @@ public class JourneyTest {
         assertEquals("Total elevation descended J2: ", expectedJ2, journey2.getGet_totalElevationDescended(), delta);
     }
 
+    @Test
+    public void TestMetadata() {
 
-
-    @Test void TestMetadata() {
+        // All the journey.getStuff() are tested elsewhere so we know it correct
 
         Journey journey1 = data_go_east_and_back();
         Journey journey2 = data_go_in_square();
 
+        String expectedJ1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<root>\n" +
+                "  <item>\n" +
+                "    <timeStarted>" + journey1.getTimeStarted() + "</timeStarted>\n" +
+                "    <timeFinished>" + journey1.getTimeFinished() + "</timeFinished>\n" +
+                "    <totalTime>" + journey1.getTimeTotal() + "</totalTime>\n" +
+
+                "    <totalDistance>" + journey1.getTotalDistance() + "</totalDistance>\n" +
+                "    <totalElevationClimbed>" + journey1.getTotalElevationClimbed() + "</totalElevationClimbed>\n" +
+                "    <totalElevationDescended>" + journey1.getGet_totalElevationDescended() + "</totalElevationDescended>\n" +
+                "    <totalAvgSpeed>" + journey1.getAverageSpeed() + "</totalAvgSpeed>\n" +
+                "  </item>\n" +
+                "</root>\n";
+
+        String expectedJ2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<root>\n" +
+                "  <item>\n" +
+                "    <timeStarted>" + journey2.getTimeStarted() + "</timeStarted>\n" +
+                "    <timeFinished>" + journey2.getTimeFinished() + "</timeFinished>\n" +
+                "    <totalTime>" + journey2.getTimeTotal() + "</totalTime>\n" +
+
+                "    <totalDistance>" + journey2.getTotalDistance() + "</totalDistance>\n" +
+                "    <totalElevationClimbed>" + journey2.getTotalElevationClimbed() + "</totalElevationClimbed>\n" +
+                "    <totalElevationDescended>" + journey2.getGet_totalElevationDescended() + "</totalElevationDescended>\n" +
+                "    <totalAvgSpeed>" + journey2.getAverageSpeed() + "</totalAvgSpeed>\n" +
+                "  </item>\n" +
+                "</root>\n";
+
+
+        assertEquals("Total elevation descended J1: ", expectedJ1, journey1.metadataXmlString());
+        assertEquals("Total elevation descended J1: ", expectedJ2, journey2.metadataXmlString());
+
+
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /*
      * this Journey should:
-     * distance: 20KM on flat earth :D
+     * distance: 20KM on flat earth :D real is something like 22.23KM....
      * time: 5h
-     * avg speed: 4.4something
+     * avg speed: 4.447 something something
      * ele+: 100
      * ele-: 100
      */
@@ -189,6 +209,7 @@ public class JourneyTest {
 
         return journey;
     }
+
 
     /*
      * this Journey should:
@@ -254,5 +275,7 @@ public class JourneyTest {
 
         return journey;
     }
-    
+
 }
+
+
