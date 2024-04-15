@@ -53,7 +53,7 @@
     <string name="duration">Duration</string>
     <string name="distance">Distance</string>
     <string name="speed">Speed</string>
-    <string name="maveuver">Maneuver</string>
+    <string name="maveuver">V.I.S.O.R</string>
     <string name="export_gpx">Export GPX</string>
     <string name="sensor_details_title">Details for sensor:</string>
     <string name="not_implemented">(not implemented)</string>
