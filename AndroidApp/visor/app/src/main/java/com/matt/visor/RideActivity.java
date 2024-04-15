@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -71,8 +72,14 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
     private MySensorGPS _gps;
 
     private Navigator _navigator;
+    private boolean _saveInProgress;
 
 
+    /**
+     * Initializes activity state, sets up UI components, and prepares map and navigation functionalities.
+     *
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,8 +121,19 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
             view.setId(R.id.ride_btn_startPauseSave);
             onClick(view);
         }
+
+        // Not demo, but have navigation, so change the nav icon to straight to indicate forward
+        _imgManeuverIcon.setImageBitmap(app.getImageForId(0));
+        _txtManeuverDistance.setText("Let's go!");
+
     }
 
+    /**
+     * Handles button clicks for starting, pausing, and saving the ride as well as showing dialogs for confirmations.
+     * Responsible for control buttons: Start, Pause, Stop, Discard, Save
+     *
+     * @param v The view that was clicked.
+     */
     @Override
     public void onClick(View v) {
         // START PAUSE RESUME
@@ -143,16 +161,27 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         }
         // RESET
         else if(v.getId() == R.id.ride_btn_discard) {
-            //TODO dialog
-            unbindAndStopService();
-            resetView();
+            new AlertDialog.Builder(this, R.style.MyDialogTheme)
+                    .setTitle(R.string.dialog_confirm)
+                    .setMessage("Are you sure you want to discard the ride?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        unbindAndStopService();
+                        resetView();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .show();
         }
         // Save
         else if(v.getId() == R.id.ride_btn_save) {
-            // TODO dialog
-            saveRide();
-            unbindAndStopService();
-            resetView();
+            new AlertDialog.Builder(this, R.style.MyDialogTheme)
+                    .setTitle(R.string.dialog_confirm)
+                    .setMessage("Are you sure you want to stop and save the ride?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        saveRide();
+                        unbindAndStopService();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> {})
+                    .show();
         }
 
 
@@ -160,7 +189,9 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
+    /**
+     * Disconnects from the service and stops it.
+     */
     private void unbindAndStopService() {
         if (isServiceBound) {
             unbindService(connection);
@@ -171,18 +202,41 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         stopService(serviceIntent);
     }
 
+    /**
+     * Saves the current ride, triggers data preparation and storage processes.
+     */
     private void saveRide() {
         System.out.println("Saving route");
 
-        // TODO center map on the thing I want to save
-        // TODO display saving loading bar
+        _saveInProgress = true;
+        prepareMapForSave();
 
         _recorderService.saveData(_map, this);
-
-        // Hide loading bar with some on some listener
     }
 
+    /**
+     * Prepares the map for saving by adjusting the view to include all relevant route points.
+     */
+    private void prepareMapForSave() {
+        if(_polylineRoute != null)
+            _polylineRoute.remove();
 
+        if (_polylineActual != null && !_polylineActual.getPoints().isEmpty()) {
+            List<LatLng> points = _polylineActual.getPoints(); // Get all points in the polyline
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (LatLng point : points) {
+                builder.include(point);
+            }
+
+            LatLngBounds bounds = builder.build();
+            // Move the camera
+            _map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+        }
+    }
+
+    /**
+     * Updates the state and icons of the bottom navigation bar based on the current recording status.
+     */
     private void setBottomBar() {
         // Start pause icon
         if (_running && !_paused) {
@@ -207,31 +261,42 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
-
+    /**
+     * Resets the view to its initial state and updates the UI elements to reflect no active ride.
+     */
     private void resetView() {
+        _saveInProgress = false;
         _running = false;
         _paused = false;
         setBottomBar();
+
+        if(_map != null && _mapMarker != null)
+            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_mapMarker.getPosition(), DEFAULT_ZOOM));
 
         _txtElapsed.setText("00:00:00");
         _txtSpeed.setText("0");
         _txtDistance.setText("0");
     }
 
-    /*
+    /******************************
+     **      BACK BUTTON         **
+     ******************************/
 
-        BACK BUTTON
-
+    /**
+     * Handles the action when the back arrow is clicked to have the same as when back button is clicked.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to proceed, true to consume it here.
      */
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         onBackPressed();
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Overrides the default back button behavior to include a confirmation dialog when a ride is active.
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
@@ -239,7 +304,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         if(_running){
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
             builder.setTitle(R.string.dialog_confirm);
-            builder.setMessage("Please stop ride first");
+            builder.setMessage("Please save or discard the ride first.");
             builder.setPositiveButton("OK", (dialog, id) -> {});
 
             AlertDialog alert = builder.create();
@@ -250,34 +315,48 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
             super.onBackPressed();
     }
 
-
-
-
-
-
-
-    /*
-
-    SERVICE
-
-     */
+    /**************************
+     **      SERVICE         **
+     **************************/
 
     private final ServiceConnection connection = new ServiceConnection() {
+
+        /**
+         * Establishes a connection with the RecorderService and starts the service.
+         *
+         * @param className The concrete component name of the service that has been connected.
+         * @param service The IBinder of the Service's communication channel.
+         */
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             RecorderService.LocalBinder binder = (RecorderService.LocalBinder) service;
             _recorderService = binder.getService();
             _recorderService.start(RideActivity.this);
         }
+
+        /**
+         * Handles the disconnection from the service.
+         *
+         * @param arg0 The concrete component name of the service that has been disconnected.
+         */
         @Override
         public void onServiceDisconnected(ComponentName arg0) {}
     };
 
+    /**
+     * Updates UI components with new data received from sensors or GPS.
+     *
+     * @param speed The current speed.
+     * @param distance The total distance covered.
+     * @param latLng The current GPS coordinates.
+     */
     @Override
     public void onNewData(double speed, double distance, LatLng latLng) {
 
-        sendDataToHud(speed, distance, latLng);
+        if(_navigator != null)
+            _navigator.update(latLng);
 
+        sendDataToHUD(speed, distance);
 
         runOnUiThread(() -> {
             // Polyline
@@ -302,62 +381,60 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void sendDataToHud(double speed, double distance, LatLng latLng) {
+    /**
+     * Sends current navigation data to the HUD unit.
+     *
+     * @param speed The current speed.
+     * @param distance The current distance covered.
+     */
+    private void sendDataToHUD(double speed, double distance) {
 
         VisorApplication app = (VisorApplication) getApplication();
 
-        speed = Double.parseDouble(String.format("%.1f", speed));
-        distance =  Double.parseDouble(String.format("%.1f", distance));
+        Double maneuverDistance = _navigator != null ? _navigator.getDistanceToNext() : null;
+        int maneuverIcon = _navigator != null ? _navigator.getManeuverID() : -1;
 
-        if(_navigator == null) {
-            app.deviceManager.getHUD().sendSpeedAndDistance(speed, distance);
-            return;
-        }
-
-        System.out.println("Distance: " + _navigator.getDistanceToNext());
-        System.out.println("Distance: " + _navigator.getDistanceToNext());
-        System.out.println("Distance: " + _navigator.getDistanceToNext());
-
-        _navigator.update(latLng);
-        if(_navigator.getDistanceToNext() < 0.3D) // if distance is less than 100m
-            app.deviceManager.getHUD().sendNav(_navigator.getManeuverID(), (int)(_navigator.getDistanceToNext() * 1000));
-        else
-            app.deviceManager.getHUD().sendSpeedAndDistance(speed, distance);
-
+        app.deviceManager.getHUD().sendData(speed, distance, maneuverDistance, maneuverIcon);
     }
 
+    /**
+     * Updates the elapsed time display on the UI thread.
+     *
+     * @param elapsedTime The new elapsed time to display.
+     */
     @Override
     public void onEstimatedTimeChange(int elapsedTime) {
         runOnUiThread(() -> _txtElapsed.setText(Formatter.secondsAsElapsedTime(elapsedTime)));
     }
 
+    /**
+     * Displays a dialog confirming the successful save of the ride and resets the UI.
+     *
+     * @param journeyID The ID of the journey that was saved.
+     */
     @Override
-    public void onSavingComplete() {
-        System.out.println("COMPLETE");
-        System.out.println("COMPLETE");
-        System.out.println("COMPLETE");
-        System.out.println("COMPLETE");
-        System.out.println("COMPLETE");
-        System.out.println("COMPLETE");
+    public void onSavingComplete(String journeyID) {
+        runOnUiThread(() -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
+            builder.setTitle(R.string.dialog_confirm);
+            builder.setMessage("Ride saved.");
+            builder.setPositiveButton("OK", (dialog, id) -> resetView());
 
-
-        // TODO redirect
+            AlertDialog alert = builder.create();
+            alert.show();
+        });
     }
 
 
+    /*********************
+    **      MAP         **
+    *********************/
 
-
-
-
-    /*
-
-    MAP
-
+    /**
+     * Called when the map is ready for use, sets up the initial location and route if available.
+     *
+     * @param googleMap The GoogleMap object ready for interaction.
      */
-
-
-
-
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         VisorApplication app = (VisorApplication) getApplication();
@@ -377,7 +454,6 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
 
         // ROUTE
         if(app.isNavigationSaved()){
-            // TODO steps
             _navigator = new Navigator(app.getSteps());
             drawRouteOnMap(app.getPolylineRoute());
         }
@@ -392,7 +468,7 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         _gps = app.deviceManager.getGPS();
         _gps.setValueChangedListener(() -> {
             Location location = _gps.getLocation();
-            if (_mapMarker != null && location != null) {
+            if (_mapMarker != null && location != null && !_saveInProgress) {
                 // Update the marker's position
                 _mapMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                 _map.moveCamera(CameraUpdateFactory.newLatLng(_mapMarker.getPosition()));
@@ -400,7 +476,11 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-
+    /**
+     * Draws a predefined route on the map.
+     *
+     * @param polyline A list of LatLng points defining the route.
+     */
     private void drawRouteOnMap(List<LatLng> polyline) {
         System.out.println("DRAWING");
 
@@ -416,8 +496,5 @@ public class RideActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
-
-
 
 }
