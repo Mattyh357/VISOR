@@ -43,7 +43,7 @@ public class HudBluetoothManager {
     private BluetoothGatt _bluetoothGatt;
 
     // Ready
-    private boolean _connected = false;
+    protected boolean isConnected = false;
 
 
     // MTU
@@ -107,12 +107,12 @@ public class HudBluetoothManager {
             _listener.onConnected();
 
         Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onDisconnected);
-        _connected = false;
+        isConnected = false;
     }
 
 
     public void sendDataTest(int instruction, String payload) {
-        if(!_connected)
+        if(!isConnected)
             return;
 
         // Make payload
@@ -246,11 +246,11 @@ public class HudBluetoothManager {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             System.out.println("onConnectionStateChange");
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                _connected = true;
+                isConnected = true;
                 gatt.discoverServices();
                 Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onConnected);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                _connected = false;
+                isConnected = false;
                 Optional.ofNullable(_listener).ifPresent(HudBluetoothListener::onDisconnected);
             }
         }
