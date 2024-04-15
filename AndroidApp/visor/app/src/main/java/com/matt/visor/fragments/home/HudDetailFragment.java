@@ -8,6 +8,7 @@
 
 package com.matt.visor.fragments.home;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -96,15 +97,7 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
 
 
         // Buttons
-        _binding.btnRunDemo.setOnClickListener(v -> {
-
-            // PretendGPS :)
-            app.deviceManager.setGPS(new MySensorGPS_FAKE());
-            app.saveNavigation(MySensorGPS_FAKE.getFakeSteps(), MySensorGPS_FAKE.getFacePoly());
-
-            Intent intent = new Intent(this.getActivity(), RideActivity.class);
-            startActivity(intent);
-        });
+        _binding.btnRunDemo.setOnClickListener(v -> onRunDemoClick());
 
         // Images
         List<TableKvpItem<?>> data = new ArrayList<>();
@@ -122,6 +115,27 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
 
         // Root
         return root;
+    }
+
+    /**
+     * Shows dialog with info about the demo and when YES clicked starts the demo.
+     * Demo is started by replacing the GPS sensor with fake one and redirecting the ride activity.
+     */
+    private void onRunDemoClick() {
+
+        new AlertDialog.Builder(getContext(), R.style.MyDialogTheme)
+                .setTitle(R.string.dialog_confirm)
+                .setMessage("The demo feature will override device's GPS and will follow a pre-set route until you choose to stop, or reach the destination. \n\n You can stop the demo by saving or discarding the ride and pressing the back button.   \n\n Would you like to start?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    VisorApplication app = (VisorApplication) requireActivity().getApplication();
+                    app.deviceManager.setGPS(new MySensorGPS_FAKE());
+                    app.saveNavigation(MySensorGPS_FAKE.getFakeSteps(), MySensorGPS_FAKE.getFacePoly());
+
+                    Intent intent = new Intent(this.getActivity(), RideActivity.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton("No", (dialog, which) -> {})
+                .show();
     }
 
     /**
@@ -157,7 +171,7 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
 
 
     /**
-     * Removes Fake GPS sensor on load - if fake gps is used
+     * Removes Fake GPS sensor on load - if fake gps is used.
      */
     @Override
     public void onResume() {
@@ -168,6 +182,13 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
             app.deviceManager.setGPS(new MySensorGPS());
             app.deviceManager.getGPS().activateSensor(getActivity());
             app.unSaveNavigation();
+
+
+            new AlertDialog.Builder(getContext(), R.style.MyDialogTheme)
+                    .setTitle("Demo ended")
+                    .setMessage("Demo feature ended and the override is canceled. The application is now using the phone's GPS. ")
+                    .setPositiveButton("OK", (dialog, which) -> {})
+                    .show();
         }
     }
 }
