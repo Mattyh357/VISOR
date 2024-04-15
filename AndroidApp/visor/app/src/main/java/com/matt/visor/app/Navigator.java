@@ -130,7 +130,7 @@ public class Navigator {
     public int getManeuverID() {
         String maneuver = getManeuverString();
 
-        return MANEUVER_ID.getOrDefault(maneuver, -1);
+        return MANEUVER_ID.getOrDefault(maneuver, 0);
     }
 
     /**
