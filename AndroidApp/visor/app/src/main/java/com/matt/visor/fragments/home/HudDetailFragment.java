@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -157,7 +158,10 @@ public class HudDetailFragment extends Fragment implements TableKvpOnClickListen
         System.out.println("On item click : " + item.getKey());
 
         VisorApplication app = (VisorApplication) requireActivity().getApplication();
-        app.deviceManager.getHUD().sendNav(Integer.parseInt(item.getKey()), 0);
+        if(app.deviceManager.getHUD().isConnected())
+            app.deviceManager.getHUD().sendNav(Integer.parseInt(item.getKey()), 0);
+        else
+            Toast.makeText(getContext(), "Not connected",  Toast.LENGTH_SHORT).show();
     }
 
     /**
