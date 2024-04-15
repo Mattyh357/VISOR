@@ -7,7 +7,7 @@
     <string name="title_config">Config</string>
     <string name="title_sensor_detail">Sensor Detail</string>
     <string name="title_history_details">History Detail\t</string>
-    <string name="app_version">0.00000000001</string>
+    <string name="app_version">1.0</string>
     <string name="title_hud_detail">HUD Detail</string>
     <string name="title_sensor_GPS">Sensor GPS</string>
     <string name="title_rides_navigate">Rides - Navigate to</string>
