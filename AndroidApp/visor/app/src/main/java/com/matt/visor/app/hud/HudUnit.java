@@ -133,6 +133,14 @@ public class HudUnit implements HudBluetoothListener{
             _sensorStatusListener.onChange();
     }
 
+    /**
+     * Indicated whether or not the BT device is connected
+     *
+     * @return True if connected
+     */
+    public boolean isConnected() {
+        return _bt.isConnected;
+    }
 
     /**
      * HudBluetoothListener interface implementations
