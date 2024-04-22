@@ -66,8 +66,11 @@ void Visor::handle_workMode(std::vector<std::string> data) {
     switch (instruction) {
         case INSTRUCTION_SPEED_TEST: {
             Serial.println("SPEED");
-            std::string speed = data[1];
-            std::string distance = data[2];
+
+            // TODO fix properly - screen isn't cleared properly, when smaller text replaces larger, some pixes remains
+            // By adding spaces before and after, this is somewhat solved :)
+            std::string speed = ' ' + data[1] + ' ';
+            std::string distance = ' ' + data[2] + ' ';
 
             _display.print( 80, 25, "(s)", &Font8, BLACK, WHITE);
             _display.print(-1, 20, speed.c_str());
